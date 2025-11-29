@@ -23,15 +23,15 @@ class Ticket {
         // jalankan query
         return mysqli_stmt_execute($stmt);
     }
-    public function updateTicket($id, $ticket_type, $price)
+    public function updateTicket($id, $event_id, $ticket_type, $price)
     {
-        $query = "UPDATE {$this->table} SET ticket_type = ?, price = ? WHERE ticket_id = ?";
+        $query = "UPDATE {$this->table} SET event_id = ?, ticket_type = ?, price = ? WHERE ticket_id = ?";
 
         // siapin query
         $stmt = mysqli_prepare($this->db, $query);
 
         // ngisi data
-        mysqli_stmt_bind_param($stmt, "sdi", $ticket_type, $price, $id);
+        mysqli_stmt_bind_param($stmt, "isdi", $event_id, $ticket_type, $price, $id);
 
         // jalankan query
         return mysqli_stmt_execute($stmt);

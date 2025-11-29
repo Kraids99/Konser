@@ -221,7 +221,7 @@ INSERT INTO
     )
 VALUES
     (1, 1, 'VIP', 2500000.00, NOW ()),
-    (2, 1, 'Festival', 1200000.00, NOW ()),
+    (2, 1, 'Reguler', 1200000.00, NOW ()),
     (3, 2, 'Reguler A', 750000.00, NOW ()),
     (4, 3, 'Early Bird', 500000.00, NOW ()),
     (5, 4, 'Premium Seat', 1800000.00, NOW ());
