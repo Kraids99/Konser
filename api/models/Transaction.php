@@ -33,7 +33,7 @@ class Transaction {
         return mysqli_stmt_execute($stmt);
     }
 
-    public function findById($id)
+    public function getById($id)
     {
         $query = "SELECT * FROM transactions WHERE transaction_id = ?";
         // siapin query
