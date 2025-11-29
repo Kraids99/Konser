@@ -37,45 +37,35 @@ class Ticket {
         return mysqli_stmt_execute($stmt);
     }
 
-    public function findById($id)
+    public function getAll(){
+        $query = "SELECT * FROM tickets";
+
+        $stmt = mysqli_prepare($this->db, $query);
+
+        // jalankan query
+        return mysqli_stmt_execute($stmt);
+    }
+
+    //sama saja kek findById
+    public function getById($id)
     {
-        $query = "SELECT * FROM tickets WHERE ticket_id = ?";
+        $query = "SELECT * FROM {$this->table} WHERE ticket_id = ?";
+
         // siapin query
         $stmt = mysqli_prepare($this->db, $query);
 
-        // ngisi data email
-        mysqli_stmt_bind_param($stmt, "i", $id); 
-        
+        // ngisi data
+        mysqli_stmt_bind_param($stmt, "i", $id);
+
         // jalankan query
         mysqli_stmt_execute($stmt);
 
         // ambil hasil dari database
         $result = mysqli_stmt_get_result($stmt);
-        
+
         // ambil data 1 baris sebagai array
         return mysqli_fetch_assoc($result);
     }
-
-    //sama saja kek findById
-    // public function getById($id)
-    // {
-    //     $query = "SELECT * FROM {$this->table} WHERE event_id = ?";
-
-    //     // siapin query
-    //     $stmt = mysqli_prepare($this->db, $query);
-
-    //     // ngisi data
-    //     mysqli_stmt_bind_param($stmt, "i", $id);
-
-    //     // jalankan query
-    //     mysqli_stmt_execute($stmt);
-
-    //     // ambil hasil dari database
-    //     $result = mysqli_stmt_get_result($stmt);
-
-    //     // ambil data 1 baris sebagai array
-    //     return mysqli_fetch_assoc($result);
-    // }
 
     public function deleteTicket($id)
     {

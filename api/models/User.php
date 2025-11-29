@@ -127,6 +127,15 @@ class User
         return mysqli_stmt_execute($stmt);
     }
 
+    public function getAll(){
+        $query = "SELECT * FROM users";
+
+        $stmt = mysqli_prepare($this->db, $query);
+
+        // jalankan query
+        return mysqli_stmt_execute($stmt);
+    }
+
     // remember Token
     public function saveLoginToken($id, $token)
     {

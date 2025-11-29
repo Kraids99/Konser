@@ -26,13 +26,22 @@ class Event {
 
     public function updateEvent($id, $event_name, $event_location, $event_date, $quota)
     {
-        $query = "UPDATE {$this->table} SET event_name = ?, event_location = ?, event_date = ?, quota = ?, WHERE event_id = ?";
+        $query = "UPDATE {$this->table} SET event_name = ?, event_location = ?, event_date = ?, quota = ? WHERE event_id = ?";
 
         // siapin query
         $stmt = mysqli_prepare($this->db, $query);
 
         // ngisi data
         mysqli_stmt_bind_param($stmt, "sssii", $event_name, $event_location, $event_date, $quota, $id);
+
+        // jalankan query
+        return mysqli_stmt_execute($stmt);
+    }
+
+    public function getAll(){
+        $query = "SELECT * FROM events";
+
+        $stmt = mysqli_prepare($this->db, $query);
 
         // jalankan query
         return mysqli_stmt_execute($stmt);
