@@ -23,6 +23,7 @@ class Event {
         // jalankan query
         return mysqli_stmt_execute($stmt);
     }
+
     public function updateEvent($id, $event_name, $event_location, $event_date, $quota)
     {
         $query = "UPDATE {$this->table} SET event_name = ?, event_location = ?, event_date = ?, quota = ?, WHERE event_id = ?";
