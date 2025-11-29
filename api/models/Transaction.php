@@ -12,7 +12,7 @@ class Transaction {
 
     public function createTransaction($user_id, $ticket_id, $ticket_token, $quantity, $total)
     {
-        $query = "INSERT INTO {$this->table} ($user_id, $ticket_id, $ticket_token, $quantity, $total) VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO {$this->table} (user_id, ticket_id, ticket_token, quantity, total) VALUES (?, ?, ?, ?, ?)";
 
         // siapin query
         $stmt = mysqli_prepare($this->db, $query);
@@ -29,8 +29,10 @@ class Transaction {
 
         $stmt = mysqli_prepare($this->db, $query);
 
-        // jalankan query
-        return mysqli_stmt_execute($stmt);
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
     public function getById($id)
@@ -50,6 +52,17 @@ class Transaction {
         
         // ambil data 1 baris sebagai array
         return mysqli_fetch_assoc($result);
+    }
+
+    public function updateTransaction($id, $user_id, $ticket_id, $ticket_token, $quantity, $total)
+    {
+        $query = "UPDATE {$this->table} SET user_id = ?, ticket_id = ?, ticket_token = ?, quantity = ?, total = ? WHERE transaction_id = ?";
+
+        $stmt = mysqli_prepare($this->db, $query);
+
+        mysqli_stmt_bind_param($stmt, "iisidi", $user_id, $ticket_id, $ticket_token, $quantity, $total, $id);
+
+        return mysqli_stmt_execute($stmt);
     }
 
     public function deleteTransaction($id)

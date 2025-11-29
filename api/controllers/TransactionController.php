@@ -14,7 +14,7 @@ class TransactionController
     // get all 
     public function index()
     {
-        header('Content-Type: aplication/json');
+        header('Content-Type: application/json');
 
         $transactions = $this->transaction->getAll();
 
@@ -80,36 +80,34 @@ class TransactionController
     }
 
     // update 
-    // public function update()
-    // {
-    //     header('Content-Type: application/json');
+    public function update()
+    {
+        header('Content-Type: application/json');
 
-    //     $transaction_id = $_POST['transaction_id'] ?? '';
-    //     $user_id = $_POST['user_id'] ?? '';
-    //     $ticket_id = $_POST['ticket_id'] ?? '';
-    //     $ticket_token = $_POST['ticket_token'] ?? '';
-    //     $quantity = $_POST['quantity'] ?? 0;
-    //     $total = $_POST['total'] ?? 0;
+        $transaction_id = $_POST['transaction_id'] ?? '';
+        $user_id = $_POST['user_id'] ?? '';
+        $ticket_id = $_POST['ticket_id'] ?? '';
+        $ticket_token = $_POST['ticket_token'] ?? '';
+        $quantity = $_POST['quantity'] ?? 0;
+        $total = $_POST['total'] ?? 0;
 
-    //     // ngecek id , nama, lokasi, dan tanggal
-    //     if(!$transaction_id || !$user_id || !$ticket_id || !$ticket_token || !$quantity || !$total) 
-    //     {
-    //         echo json_encode(["status" => "error", "message" => "transaction_id, user_id, ticket_id, ticket_token, quantity, dan total tidak ada!"]);
-    //         return;
-    //     }
+        if(!$transaction_id || !$user_id || !$ticket_id || !$ticket_token || !$quantity || !$total) 
+        {
+            echo json_encode(["status" => "error", "message" => "transaction_id, user_id, ticket_id, ticket_token, quantity, dan total tidak ada!"]);
+            return;
+        }
 
-    //     $result = $this->transaction->updateTransaction($transaction_id , $event_id, $transaction_type, $price);
+        $result = $this->transaction->updateTransaction($transaction_id, $user_id, $ticket_id, $ticket_token, $quantity, $total);
 
-    //     // cek sukses atau engga
-    //     if($result) 
-    //     {
-    //         echo json_encode(["status" => "success", "message" => "Transaction berhasil diUpdate!"]);
-    //     } 
-    //     else 
-    //     {
-    //         echo json_encode(["status" => "error", "message" => "Gagal update transaction!"]);
-    //     }
-    // }
+        if($result) 
+        {
+            echo json_encode(["status" => "success", "message" => "Transaction berhasil diUpdate!"]);
+        } 
+        else 
+        {
+            echo json_encode(["status" => "error", "message" => "Gagal update transaction!"]);
+        }
+    }
 
     // delete
     public function delete()

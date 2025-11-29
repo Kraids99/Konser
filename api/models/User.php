@@ -132,8 +132,10 @@ class User
 
         $stmt = mysqli_prepare($this->db, $query);
 
-        // jalankan query
-        return mysqli_stmt_execute($stmt);
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
     // remember Token

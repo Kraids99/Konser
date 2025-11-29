@@ -3,14 +3,22 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/controllers/auth/RegisterController.php';
 require_once __DIR__ . '/controllers/auth/LoginController.php';
 require_once __DIR__ . '/controllers/auth/LogoutController.php';
+require_once __DIR__ . '/controllers/EventController.php';
 require_once __DIR__ . '/controllers/TicketController.php';
 require_once __DIR__ . '/controllers/TransactionController.php';
-require_once __DIR__ . '/controllers/EventController.php';
+
+$action = $_GET['action'] ?? $_POST['action'] ?? null;
+
+$register     = new RegisterController($conn);
+$login        = new LoginController($conn);
+$logout       = new LogoutController($conn);
+$event        = new EventController($conn);
+$ticket       = new TicketController($conn);
+$transaction  = new TransactionController($conn);
 
 switch ($action) {
     case 'register':
-        $controller = new RegisterController($conn);
-        $controller->register();
+        $register->register();
     break;
 
     case 'login':
@@ -41,7 +49,7 @@ switch ($action) {
         $event->delete();
     break;
 
-    case 'ticket':
+    case 'tickets':
         $ticket->index();
     break;
 
@@ -61,7 +69,7 @@ switch ($action) {
         $ticket->delete();
     break;
 
-    case 'transaction':
+    case 'transactions':
         $transaction->index();
     break;
 
@@ -73,6 +81,10 @@ switch ($action) {
         $transaction->store();
     break;
 
+    case 'transaction_update':
+        $transaction->update();
+    break;
+
     case 'transaction_delete':
         $transaction->delete();
     break;
@@ -81,6 +93,3 @@ switch ($action) {
         header('Content-Type: application/json');
         echo json_encode(["message" => "API Online"]);
 }
-
-
-

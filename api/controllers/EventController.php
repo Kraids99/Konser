@@ -14,7 +14,7 @@ class EventController
     // get all 
     public function index()
     {
-        header('Content-Type: aplication/json');
+        header('Content-Type: application/json');
 
         $events = $this->event->getAll();
 

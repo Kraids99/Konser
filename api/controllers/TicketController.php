@@ -14,7 +14,7 @@ class TicketController
     // get all 
     public function index()
     {
-        header('Content-Type: aplication/json');
+        header('Content-Type: application/json');
 
         $tickets = $this->ticket->getAll();
 
@@ -53,7 +53,7 @@ class TicketController
     {
         header('Content-Type: application/json');
 
-        $event_id = $_POST['ticket_id'] ?? '';
+        $event_id = $_POST['event_id'] ?? '';
         $ticket_type = $_POST['ticket_type'] ?? '';
         $price = $_POST['price'] ?? 0;
 
@@ -94,7 +94,7 @@ class TicketController
             return;
         }
 
-        $result = $this->ticket->updateTicket($ticket_id , $event_id, $ticket_type, $price);
+        $result = $this->ticket->updateTicket($ticket_id, $event_id, $ticket_type, $price);
 
         // cek sukses atau engga
         if($result) 
