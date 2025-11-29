@@ -23,7 +23,7 @@ class User
         // siapin query
         $stmt = mysqli_prepare($this->db, $query);
 
-        // ngisi data 
+        // ngisi data
         mysqli_stmt_bind_param($stmt, "ssss", $username, $email, $password, $role);
         
         // jalankan query
@@ -90,7 +90,7 @@ class User
         // ambil data 1 baris sebagai array
         return mysqli_fetch_assoc($result);
     }
-   
+
 
     public function getById($id)
     {
