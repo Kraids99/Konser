@@ -10,7 +10,7 @@ class Ticket {
         $this->db = $conn;
     }
 
-    public function insertTicket($event_id, $ticket_type, $price)
+    public function createTicket($event_id, $ticket_type, $price)
     {
         $query = "INSERT INTO {$this->table} ($event_id, $ticket_type, $price) VALUES (?, ?, ?)";
 

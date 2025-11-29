@@ -10,7 +10,7 @@ class Transaction {
         $this->db = $conn;
     }
 
-    public function insertTransaction($user_id, $ticket_id, $ticket_token, $quantity, $total)
+    public function createTransaction($user_id, $ticket_id, $ticket_token, $quantity, $total)
     {
         $query = "INSERT INTO {$this->table} ($user_id, $ticket_id, $ticket_token, $quantity, $total) VALUES (?, ?, ?, ?, ?)";
 

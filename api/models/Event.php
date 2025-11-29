@@ -10,7 +10,7 @@ class Event {
         $this->db = $conn;
     }
 
-    public function insertEvent($event_name, $event_location, $event_date, $quota)
+    public function createEvent($event_name, $event_location, $event_date, $quota)
     {
         $query = "INSERT INTO {$this->table} ($event_name, $event_location, $event_date, $quota) VALUES (?, ?, ?, ?)";
 
