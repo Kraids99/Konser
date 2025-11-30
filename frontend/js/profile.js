@@ -16,10 +16,10 @@ function saveChanges() {
 // ----------------------------------------------
 // 1. FETCH DATA USER LOGIN
 // ----------------------------------------------
-fetch('../api/index.php?controller=User&action=show')
+fetch('/api/controllers/UserController.php?action=show')
     .then(res => res.json())
     .then(res => {
-        console.log("API RESPONSE:", res);
+        console.log("RESPON API:", res);
 
         if (res.status !== 'success') {
             alert('Gagal mengambil data user!');
@@ -33,7 +33,7 @@ fetch('../api/index.php?controller=User&action=show')
 
         if (u.user_profile) {
             document.querySelector(".avatar").style.background =
-                `url('../api/storage/profile/${u.user_profile}') center/cover no-repeat`;
+                `url('/api/storage/profile/${u.user_profile}') center/cover no-repeat`;
         }
 
         document.getElementById("nama").value = u.username;
@@ -41,8 +41,6 @@ fetch('../api/index.php?controller=User&action=show')
         document.getElementById("telp").value = u.telp ?? "";
     })
     .catch(err => console.error("FETCH ERROR:", err));
-
-
 
 // ----------------------------------------------
 // 2. ENABLE EDIT MODE
