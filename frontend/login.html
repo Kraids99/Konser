@@ -1,35 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+
     <style>
-        body { font-family: Arial, sans-serif; max-width: 480px; margin: 40px auto; padding: 16px; }
-        form { display: grid; gap: 12px; }
-        label { font-weight: 600; }
-        input, button { padding: 10px; font-size: 14px; }
-        button { cursor: pointer; }
-        #msg { margin-top: 12px; white-space: pre-wrap; font-size: 13px; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', Arial, sans-serif;
+            background: url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y29uY2VydHxlbnwwfHwwfHx8MA%3D%3D') no-repeat center center / cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* overlay gelap */
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 12, 32, 0.78);
+            top: 0;
+            left: 0;
+        }
+
+        .card {
+            position: relative;
+            width: 380px;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 50px 28px 20px;
+            border-radius: 14px;
+            backdrop-filter: blur(14px);
+            color: white;
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.45);
+        }
+
+        h2 {
+            margin: 0;
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: grid;
+            gap: 14px;
+        }
+
+        label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        input {
+            width: 94%;
+            padding: 11px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .remember-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            width: 10px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #msg {
+            margin-top: 12px;
+            white-space: pre-wrap;
+            font-size: 13px;
+            text-align: center;
+            color: #f87171;
+            /* merah error */
+        }
+
+        #signup {
+            color: #3b82f6;
+        }
+
+        #navigate-register {
+            text-align: center;
+            padding: 10px;
+        }
     </style>
 </head>
+
 <body>
-    <h2>Login</h2>
-    <form id="loginForm">
-        <div>
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" required />
+    <div class="overlay"></div>
+
+    <div class="card">
+        <div style="text-align:center; margin-bottom:8px;">
+            <img src="./assets/logo.png" alt="Logo" style="width:30px; height:auto;">
         </div>
-        <div>
-            <label for="password">Password</label>
-            <input id="password" name="password" type="password" required />
-        </div>
-        <label><input type="checkbox" id="remember" name="remember"> Remember me</label>
-        <button type="submit">Login</button>
-    </form>
-    <!-- cek berhasil atau engga -->
-    <div id="msg"></div>
+
+
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Log in to discover and manage your concerts</p>
+
+        <form id="loginForm">
+            <div>
+                <label for="email">Email Address</label>
+                <input id="email" name="email" type="email" placeholder="Enter your email" required>
+            </div>
+
+            <div>
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" placeholder="Enter your password" required>
+            </div>
+
+            <label class="remember-wrap">
+                <input type="checkbox" id="remember" name="remember">
+                Remember me
+            </label>
+
+            <button type="submit">Login</button>
+            <p id="navigate-register">Don't have an account? <a id="signup" href="register.html">Sign up</a></p>
+        </form>
+
+        <div id="msg"></div>
+    </div>
 
     <script src="./js/login.js"></script>
 </body>
+
 </html>

@@ -9,15 +9,13 @@ async function login(e) {
     const data = new FormData();
     data.append('email', form.email.value.trim());
     data.append('password', form.password.value);
-    if(form.remember?.checked) 
-    {
+    if (form.remember?.checked) {
         data.append('remember', '1'); // 1 artinya aktifkan remember me
     }
 
     msg.textContent = 'Submitting...';
 
-    try 
-    {
+    try {
         const res = await fetch(endpoint, {
             method: 'POST',
             body: data,          // jangan set Content-Type; browser yang isi boundary
@@ -26,19 +24,16 @@ async function login(e) {
 
         const result = await res.json();
 
-        if(res.ok) 
-        {
+        if (res.ok) {
             msg.textContent = 'Login berhasil!';
             // ke halaman utama setelah berhasil daftar
             window.location.href = './index.html';
-        } 
-        else 
-        {
+        }
+        else {
             msg.textContent = 'Login gagal: ' + (result.message || 'unknown error');
         }
-    } 
-    catch (err) 
-    {
+    }
+    catch (err) {
         msg.textContent = 'Request gagal: ' + err.message;
     }
 }
