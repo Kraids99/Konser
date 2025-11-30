@@ -33,7 +33,7 @@
             position: relative;
             width: 380px;
             background: rgba(255, 255, 255, 0.07);
-            padding: 50px 28px 50px;
+            padding: 50px 28px 20px;
             border-radius: 14px;
             backdrop-filter: blur(14px);
             color: white;
@@ -111,6 +111,15 @@
             color: #f87171;
             /* merah error */
         }
+
+        #signup {
+            color: #3b82f6;
+        }
+
+        #navigate-register {
+            text-align: center;
+            padding: 10px;
+        }
     </style>
 </head>
 
@@ -143,6 +152,7 @@
             </label>
 
             <button type="submit">Login</button>
+            <p id="navigate-register">Don't have an account? <a id="signup" href="register.html">Sign up</a></p>
         </form>
 
         <div id="msg"></div>
