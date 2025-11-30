@@ -20,8 +20,7 @@ async function register(e) {
     data.append('email', email.value);
     data.append('password', password.value);
 
-    try
-    {
+    try {
         // const res = await fetch(endpoint, {
         //     method: 'POST',
         //     headers: {
@@ -39,20 +38,17 @@ async function register(e) {
 
         const result = await res.json();
 
-        if(res.ok) 
-        {
+        if (res.ok) {
             alert('Registration successful!');
             msg.textContent = '';
             // ke halaman login setelah berhasil daftar
             window.location.href = './login.html';
         }
-        else 
-        {
+        else {
             msg.textContent = 'Registration failed: ' + (result.message || 'unknown error');
         }
     }
-    catch (err)
-    {
+    catch (err) {
         msg.textContent = 'Request gagal: ' + err.message;
     }
 }
