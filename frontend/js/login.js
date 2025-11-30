@@ -29,6 +29,8 @@ async function login(e) {
         if(res.ok) 
         {
             msg.textContent = 'Login berhasil!';
+            // ke halaman utama setelah berhasil daftar
+            window.location.href = './index.html';
         } 
         else 
         {
