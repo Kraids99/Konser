@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 480px; margin: 40px auto; padding: 16px; }
+        form { display: grid; gap: 12px; }
+        label { font-weight: 600; }
+        input, button { padding: 10px; font-size: 14px; }
+        button { cursor: pointer; }
+        #msg { margin-top: 12px; white-space: pre-wrap; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <h2>Login</h2>
+    <form id="loginForm">
+        <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required />
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required />
+        </div>
+        <label><input type="checkbox" id="remember" name="remember"> Remember me</label>
+        <button type="submit">Login</button>
+    </form>
+    <!-- cek berhasil atau engga -->
+    <div id="msg"></div>
+
+    <script src="./js/login.js"></script>
+</body>
+</html>

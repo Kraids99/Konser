@@ -3,10 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Konser</title>
+    <style>
+        :root {
+            --bg: #0d1b2a;
+            --panel: #14213d;
+            --accent: #fca311;
+            --text: #e5e5e5;
+            --muted: #9fb1c5;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #0d1b2a 0%, #15294a 100%);
+            color: var(--text);
+        }
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(13, 27, 42, 0.9);
+            backdrop-filter: blur(4px);
+            border-bottom: 1px solid rgba(229, 229, 229, 0.08);
+        }
+        nav {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-size: 18px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        a {
+            color: var(--text);
+            text-decoration: none;
+        }
+        .nav-links a {
+            font-weight: 600;
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+        }
+        .nav-links a:hover {
+            background: rgba(229, 229, 229, 0.08);
+        }
+        .auth {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn:active { transform: translateY(1px); }
+        .btn-primary {
+            background: var(--accent);
+            color: #0d1b2a;
+            box-shadow: 0 10px 30px rgba(252, 163, 17, 0.2);
+        }
+        .btn-ghost {
+            background: rgba(229, 229, 229, 0.08);
+            color: var(--text);
+            border: 1px solid rgba(229, 229, 229, 0.15);
+        }
+        .btn-logout {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid rgba(229, 229, 229, 0.15);
+        }
+        main {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 48px 18px 72px;
+            display: grid;
+            gap: 80px;
+        }
+        section {
+            background: var(--panel);
+            border: 1px solid rgba(229, 229, 229, 0.08);
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+        h1, h2 { margin: 0 0 12px; }
+        p { margin: 0; color: var(--muted); line-height: 1.6; }
+        .pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(252, 163, 17, 0.12);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            margin-bottom: 10px;
+        }
+        .flex {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .card {
+            background: rgba(229, 229, 229, 0.04);
+            border: 1px solid rgba(229, 229, 229, 0.1);
+            padding: 16px;
+            border-radius: 14px;
+            min-width: 220px;
+            flex: 1;
+        }
+        .muted {
+            color: var(--muted);
+            font-size: 14px;
+        }
+        @media (max-width: 640px) {
+            nav { flex-wrap: wrap; gap: 10px; }
+            .nav-links { width: 100%; justify-content: space-between; }
+            .auth { width: 100%; justify-content: flex-start; }
+            main { padding-top: 32px; gap: 48px; }
+        }
+    </style>
 </head>
 <body>
-    <button id="submit">Submit</button>
-    <script src="js/index.js"></script>
+    <header>
+        <nav>
+            <div class="brand">Konser</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#events">Events</a>
+                <a href="#about">About Us</a>
+            </div>
+            <div class="auth">
+                <a href="./login.html" class="btn btn-ghost" data-auth="login">Login</a>
+                <a href="./register.html" class="btn btn-primary" data-auth="register">Register</a>
+                <button class="btn btn-logout" data-auth="logout" style="display:none;">Logout</button>
+                <span class="muted" data-auth="user" style="display:none;"></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <span class="pill">Your concert hub</span>
+            <h1>Temukan konser favoritmu</h1>
+            <p>Kumpulkan pengalaman musik terbaik—cari event, beli tiket, dan nikmati malam tak terlupakan.</p>
+        </section>
+
+        <section id="events">
+            <h2>Events</h2>
+            <p class="muted">Daftar event akan muncul di sini. Gunakan menu Events untuk menjelajah jadwal terbaru.</p>
+            <div class="flex" style="margin-top:16px;">
+                <div class="card">
+                    <strong>Headliners</strong>
+                    <p class="muted">Konser besar dengan kapasitas ribuan penonton.</p>
+                </div>
+                <div class="card">
+                    <strong>Local Scenes</strong>
+                    <p class="muted">Acara komunitas dan indie di kota-kotamu.</p>
+                </div>
+                <div class="card">
+                    <strong>Festival</strong>
+                    <p class="muted">Pengalaman multi-stage dengan lineup sepanjang hari.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>About Us</h2>
+            <p>Kami membantu kamu menemukan tiket konser dengan cepat dan aman. Kurasi event, pengingat jadwal, dan dukungan pelanggan siap menemani perjalanan musikmu.</p>
+        </section>
+    </main>
+
+    <script src="./js/index.js"></script>
 </body>
 </html>

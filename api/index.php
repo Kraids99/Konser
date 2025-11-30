@@ -3,18 +3,20 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/controllers/auth/RegisterController.php';
 require_once __DIR__ . '/controllers/auth/LoginController.php';
 require_once __DIR__ . '/controllers/auth/LogoutController.php';
+require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/EventController.php';
 require_once __DIR__ . '/controllers/TicketController.php';
 require_once __DIR__ . '/controllers/TransactionController.php';
 
 $action = $_GET['action'] ?? $_POST['action'] ?? null;
 
-$register     = new RegisterController($conn);
-$login        = new LoginController($conn);
-$logout       = new LogoutController($conn);
-$event        = new EventController($conn);
-$ticket       = new TicketController($conn);
-$transaction  = new TransactionController($conn);
+$register = new RegisterController($conn);
+$login = new LoginController($conn);
+$logout = new LogoutController($conn);
+$user = new UserController($conn);
+$event = new EventController($conn);
+$ticket = new TicketController($conn);
+$transaction = new TransactionController($conn);
 
 switch ($action) {
     case 'register':
@@ -27,6 +29,22 @@ switch ($action) {
 
     case 'logout':
         $logout->logout();
+    break;
+
+    case 'user_show':
+        $user->show();
+    break;
+
+    case 'user_update':
+        $user->updateProfile();
+    break;
+
+    case 'user_update_password':
+        $user->updatePassword();
+    break;
+
+    case 'user_update_photo':
+        $user->updateProfilePicture();
     break;
 
     case 'events':

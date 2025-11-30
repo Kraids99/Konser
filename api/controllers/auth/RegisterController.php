@@ -36,6 +36,12 @@ class RegisterController
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
 
+        // kalau pakai balikinya json di frontend formatnya harus ini 
+        // $data = json_decode(file_get_contents("php://input"), true);
+        // $username = $data['username'] ?? '';
+        // $email    = $data['email'] ?? '';
+        // $password = $data['password'] ?? '';
+
         // cek pengisian
         if(!$username || !$email || !$password)
         {

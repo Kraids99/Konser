@@ -1,0 +1,39 @@
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 480px; margin: 40px auto; padding: 16px; }
+        form { display: grid; gap: 12px; }
+        label { font-weight: 600; }
+        input, button { padding: 10px; font-size: 14px; }
+        button { cursor: pointer; }
+        #msg { margin-top: 12px; white-space: pre-wrap; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <h2>Register</h2>
+    <form id="registerForm">
+        <div>
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" required />
+        </div>
+        <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required />
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required />
+        </div>
+        <button type="submit">Register</button>
+    </form>
+    <div id="msg"></div>
+
+    <script src="./js/register.js"></script>
+</body>
+</html>
