@@ -10,10 +10,15 @@ async function checkSession() {
         const res = await fetch('../api/index.php?action=user_show', {
             credentials: 'include'
         });
-        if (!res.ok) throw new Error('not logged in');
-        const { data } = await res.json();
-        showLoggedIn(data?.username || 'User');
-    } catch {
+
+        if (!res.ok) throw new Error("Not logged in");
+
+        const json = await res.json();
+        const username = json?.data?.username || 'User';
+
+        showLoggedIn(username);
+
+    } catch (err) {
         showLoggedOut();
     }
 }
@@ -22,6 +27,7 @@ function showLoggedIn(username) {
     if (loginBtn) loginBtn.style.display = 'none';
     if (registerBtn) registerBtn.style.display = 'none';
     if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+
     if (userLabel) {
         userLabel.style.display = 'inline-flex';
         userLabel.textContent = username;
@@ -32,6 +38,7 @@ function showLoggedOut() {
     if (loginBtn) loginBtn.style.display = 'inline-flex';
     if (registerBtn) registerBtn.style.display = 'inline-flex';
     if (logoutBtn) logoutBtn.style.display = 'none';
+
     if (userLabel) {
         userLabel.style.display = 'none';
         userLabel.textContent = '';
@@ -46,7 +53,7 @@ async function handleLogout() {
             credentials: 'include'
         });
     } catch (err) {
-        console.error('Logout error', err);
+        console.error("Logout error:", err);
     } finally {
         showLoggedOut();
     }
