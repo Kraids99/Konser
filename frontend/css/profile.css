@@ -1,0 +1,212 @@
+/* ROOT */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f4f6fb;
+    color: #333;
+}
+
+/* WRAPPER KEMBALI */
+.top-back-wrapper {
+    width: 100%;
+    max-width: 650px;
+    margin: 25px auto 0;
+    padding: 0 20px; /* samakan dengan padding kontainer supaya rata */
+}
+
+.back-btn {
+    padding: 8px 16px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.back-btn:hover {
+    background: #f0f0f0;
+}
+
+
+/* PROFILE HEADER */
+.profile-header {
+    background: #fff;
+    padding: 35px 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border: 1px solid #eaeaea;
+    text-align: center;
+    margin: 25px auto;
+    max-width: 600px;
+}
+
+.profile-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.profile-email {
+    color: #777;
+    margin: 3px 0 10px;
+}
+
+.change-photo {
+    color: #2563eb;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.change-photo:hover {
+    text-decoration: underline;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+/* TITLES */
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.page-subtitle {
+    color: #777;
+    margin-bottom: 25px;
+}
+
+/* CARD */
+.card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border: 1px solid #eaeaea;
+    text-align: left;
+}
+
+.card h3 {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+/* INPUT */
+.info-row {
+    margin-bottom: 15px;
+}
+
+.info-row label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #555;
+}
+
+.info-row input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #dadce0;
+    background: #f9fafc;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.info-row input:focus {
+    border-color: #2563eb;
+    background: #fff;
+}
+
+.info-row input:read-only {
+    background: #eee;
+}
+
+/* BUTTON GROUP */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.edit-btn,
+.save-btn,
+.cancel-btn {
+    flex: 1;
+    padding: 13px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background: #2563eb;
+}
+
+.save-btn {
+    background: #16a34a;
+}
+
+.cancel-btn {
+    background: #6b7280;
+}
+
+/* CHANGE PASSWORD */
+.change-password-btn {
+    width: 100%;
+    padding: 13px;
+    background: #2563eb;
+    border: none;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.change-password-btn:hover {
+    background: #1e4fc7;
+}
+
+/* LOGOUT DELETE */
+.logout-btn, .delete-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.logout-btn {
+    background: #fff;
+    border: 1px solid #ccd1d7;
+}
+
+.delete-btn {
+    background: #d63b3b;
+    color: #fff;
+}
+
+.delete-btn:hover {
+    background: #b92f2f;
+}

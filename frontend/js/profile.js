@@ -1,83 +1,65 @@
-function enableEdit() {
-    document.getElementById('nama').disabled = false;
-    document.getElementById('email').disabled = false;
-    document.getElementById('telp').disabled = false;
-    document.getElementById('saveBtn').style.display = 'inline-block';
-}
-function saveChanges() {
-    // AJAX ke backend di sini
-    alert('Perubahan disimpan!');
-    document.getElementById('nama').disabled = true;
-    document.getElementById('email').disabled = true;
-    document.getElementById('telp').disabled = true;
-    document.getElementById('saveBtn').style.display = 'none';
-}
+const namaInput = document.getElementById("nama");
+const emailInput = document.getElementById("email");
+const telpInput = document.getElementById("telp");
 
-// ----------------------------------------------
-// 1. FETCH DATA USER LOGIN
-// ----------------------------------------------
-fetch('/api/controllers/UserController.php?action=show')
-    .then(res => res.json())
-    .then(res => {
-        console.log("RESPON API:", res);
+const editBtn = document.getElementById("editBtn");
+const saveBtn = document.getElementById("saveBtn");
+const cancelBtn = document.getElementById("cancelBtn");
 
-        if (res.status !== 'success') {
-            alert('Gagal mengambil data user!');
-            return;
-        }
+let originalValues = {
+    nama: namaInput.value,
+    email: emailInput.value,
+    telp: telpInput.value
+};
 
-        const u = res.data;
+editBtn.addEventListener("click", () => {
+    namaInput.removeAttribute("readonly");
+    emailInput.removeAttribute("readonly");
+    telpInput.removeAttribute("readonly");
 
-        document.querySelector(".name").textContent = u.username;
-        document.querySelector(".email").textContent = u.email;
+    editBtn.style.display = "none";
+    saveBtn.style.display = "block";
+    cancelBtn.style.display = "block";
 
-        if (u.user_profile) {
-            document.querySelector(".avatar").style.background =
-                `url('/api/storage/profile/${u.user_profile}') center/cover no-repeat`;
-        }
+    namaInput.focus();
+});
 
-        document.getElementById("nama").value = u.username;
-        document.getElementById("email").value = u.email;
-        document.getElementById("telp").value = u.telp ?? "";
-    })
-    .catch(err => console.error("FETCH ERROR:", err));
+saveBtn.addEventListener("click", () => {
+    originalValues = {
+        nama: namaInput.value,
+        email: emailInput.value,
+        telp: telpInput.value
+    };
 
-// ----------------------------------------------
-// 2. ENABLE EDIT MODE
-// ----------------------------------------------
-function enableEdit() {
-    document.getElementById('nama').disabled = false;
-    document.getElementById('email').disabled = false;
-    document.getElementById('telp').disabled = false;
+    namaInput.setAttribute("readonly", true);
+    emailInput.setAttribute("readonly", true);
+    telpInput.setAttribute("readonly", true);
 
-    document.getElementById('saveBtn').style.display = 'inline-block';
-}
+    editBtn.style.display = "block";
+    saveBtn.style.display = "none";
+    cancelBtn.style.display = "none";
 
-// ----------------------------------------------
-// 3. SIMPAN PERUBAHAN KE BACKEND
-// ----------------------------------------------
-function saveChanges() {
-    let formData = new FormData();
-    formData.append("username", document.getElementById("nama").value);
-    formData.append("email", document.getElementById("email").value);
-    formData.append("telp", document.getElementById("telp").value);
+    alert("Perubahan berhasil disimpan!");
+});
 
-    fetch('../controller/user.php?action=updateProfile', {
-        method: "POST",
-        body: formData
-    })
-        .then(res => res.json())
-        .then(res => {
-            if (res.status === "success") {
-                alert("Perubahan berhasil disimpan!");
+cancelBtn.addEventListener("click", () => {
+    namaInput.value = originalValues.nama;
+    emailInput.value = originalValues.email;
+    telpInput.value = originalValues.telp;
 
-                // kunci input lagi
-                document.getElementById('nama').disabled = true;
-                document.getElementById('email').disabled = true;
-                document.getElementById('telp').disabled = true;
-                document.getElementById('saveBtn').style.display = 'none';
-            } else {
-                alert(res.message);
-            }
-        });
+    namaInput.setAttribute("readonly", true);
+    emailInput.setAttribute("readonly", true);
+    telpInput.setAttribute("readonly", true);
+
+    editBtn.style.display = "block";
+    saveBtn.style.display = "none";
+    cancelBtn.style.display = "none";
+});
+
+function goBack() {
+    if (document.referrer) {
+        history.back();
+    } else {
+        window.location.href = "dashboard.html";
+    }
 }

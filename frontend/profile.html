@@ -1,247 +1,87 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Saya</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f6f8;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .profile-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 20px;
-        }
-
-        .card {
-            background: #fff;
-            height: 215px;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        #keamanan {
-            background: #fff;
-            height: 110px;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        #profile-box {
-            background: #fff;
-            height: 230px;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            text-align: center;
-        }
-
-        .avatar {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            background: #f5c8b1;
-            margin: auto;
-        }
-
-        .name {
-            margin-top: 15px;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .email {
-            color: #777;
-            margin-bottom: 20px;
-        }
-
-        .logout-btn {
-            display: inline-block;
-            padding: 10px 25px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background: #fff;
-            cursor: pointer;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .info-item {
-            background: #f9fafb;
-            border: 1px solid #eee;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .ticket-item {
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #eee;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ticket-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .ticket-icon {
-            width: 34px;
-            height: 34px;
-            background: #e8f0ff;
-            color: #3f70e9;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .danger-box {
-            border: 1px solid #f5c2c7;
-            background: #f8d7da;
-            padding: 20px;
-            border-radius: 10px;
-            color: #b50000;
-            margin-top: 20px;
-        }
-
-        .delete-btn {
-            background: #d9534f;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .edit-btn,
-        .password-btn {
-            float: right;
-            padding: 6px 12px;
-            border: 1px solid #ccc;
-            background: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 12px;
-        }
-
-        .info-row label {
-            width: 150px;
-            font-weight: 600;
-        }
-
-        .info-row input {
-            flex: 1;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            background: #f9fafb;
-        }
-    </style>
-
-    <script src="./js/profile.js"></script>
+    <link rel="stylesheet" href="./css/profile.css">
 </head>
-
 <body>
+
+    <!-- TOMBOL KEMBALI -->
+    <div class="top-back-wrapper">
+        <button class="back-btn" onclick="goBack()">← Kembali</button>
+    </div>
+
     <div class="container">
-        <h1>Profil Saya</h1>
-        <div class="subtitle">Kelola informasi profil dan keamanan akun Anda</div>
 
-        <div class="profile-layout" id="profile-layout">
-            <!-- LEFT PROFILE -->
-            <div id="profile-box">
-                <div class="avatar"></div>
-                <div class="name">John Doe</div>
-                <div class="email">johndoe@email.com</div>
-                <button class="logout-btn">Logout</button>
+        <h2 class="page-title">Profil Saya</h2>
+        <p class="page-subtitle">Kelola informasi akun dan keamanan Anda</p>
+
+        <!-- PROFILE HEADER -->
+        <div class="profile-header">
+            <img src="./img/profile.jpg" class="profile-photo" alt="Foto Profil">
+            <h3 class="profile-name">Nama Pengguna</h3>
+            <p class="profile-email">email@gmail.com</p>
+            <a href="#" class="change-photo">Ganti foto profil</a>
+        </div>
+        
+        <!-- INFORMASI AKUN -->
+        <div class="card">
+            <h3>Informasi Akun</h3>
+
+            <div class="info-row">
+                <label>Nama Lengkap</label>
+                <input id="nama" type="text" value="Nama Pengguna" readonly>
             </div>
 
-            <!-- RIGHT CONTENT -->
-            <div>
-                <div class="card">
-                    <div class="section-title">Informasi Pribadi<button class="edit-btn"
-                            onclick="enableEdit()">Edit</button></div>
-                    <div class="info-row">
-                        <label>Nama Lengkap</label>
-                        <input type="text" id="nama" placeholder="John Doe" disabled>
-                    </div>
-                    <div class="info-row">
-                        <label>Email</label>
-                        <input type="email" id="email" placeholder="johndoe@email.com" disabled>
-                    </div>
-                    <div class="info-row">
-                        <label>Nomor Telepon</label>
-                        <input type="text" id="telp" placeholder="+62 812 3456 7890" disabled>
-                    </div>
-                    <button id="saveBtn" class="edit-btn" style="margin-top:10px; display:none;"
-                        onclick="saveChanges()">Simpan</button>
-                </div>
-
-                <div class="card" style="margin-top:20px;">
-                    <div class="section-title">Riwayat Pembelian Tiket</div>
-
-                </div>
-
-                <div id="keamanan" style=" margin-top:20px;">
-                    <div class="section-title">Keamanan<button class="password-btn">Ubah Password</button></div>
-                </div>
-
-                <div class="danger-box">
-                    <strong>Zona Berbahaya</strong><br>
-                    Setelah akun Anda dihapus, semua data dan riwayat pembelian akan dihapus secara permanen.
-                    <br>
-                    <button class="delete-btn">Hapus Akun</button>
-                </div>
+            <div class="info-row">
+                <label>Email</label>
+                <input id="email" type="email" value="email@gmail.com" readonly>
             </div>
+
+            <div class="info-row">
+                <label>No. Telepon</label>
+                <input id="telp" type="text" value="08123456789" readonly>
+            </div>
+
+            <div class="btn-group">
+                <button id="editBtn" class="edit-btn">Edit Profil</button>
+                <button id="saveBtn" class="save-btn" style="display:none;">Simpan</button>
+                <button id="cancelBtn" class="cancel-btn" style="display:none;">Batal</button>
+            </div>
+        </div>
+
+        <!-- UBAH PASSWORD -->
+        <div class="card">
+            <h3>Keamanan Akun</h3>
+
+            <div class="info-row">
+                <label>Password Lama</label>
+                <input id="oldPass" type="password" placeholder="Masukkan password lama">
+            </div>
+
+            <div class="info-row">
+                <label>Password Baru</label>
+                <input id="newPass" type="password" placeholder="Masukkan password baru">
+            </div>
+
+            <div class="info-row">
+                <label>Konfirmasi Password</label>
+                <input id="confirmPass" type="password" placeholder="Konfirmasi password baru">
+            </div>
+
+            <button class="change-password-btn">Ubah Password</button>
+        </div>
+
+        <!-- LOGOUT & DELETE -->
+        <div class="danger-section">
+            <button class="logout-btn">Logout</button>
+            <button class="delete-btn">Hapus Akun</button>
         </div>
     </div>
 
-</body>
+    <script src="./js/profile.js"></script>
 
+</body>
 </html>
