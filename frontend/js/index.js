@@ -45,7 +45,7 @@ async function handleLogout() {
             method: "POST",
             credentials: "include",
         });
-    } catch {}
+    } catch { }
     showLoggedOut();
 }
 
