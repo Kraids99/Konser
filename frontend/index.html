@@ -14,11 +14,13 @@
         <div class="nav-left">
             <div class="logo">🎵 ConcertTix</div>
         </div>
+
         <nav class="nav-menu">
-            <a class="active">Dashboard</a>
-            <a>History</a>
-            <a>Profile</a>
+            <a href="#dashboard" class="active">Dashboard</a>
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact</a>
         </nav>
+
         <div class="nav-user">
             <img src="https://i.pravatar.cc/40" class="avatar">
             <div class="user-info">
@@ -28,13 +30,25 @@
         </div>
     </header>
 
-    <main class="container">
+    <section id="dashboard" class="container">
         <h1 class="title">Konser Mendatang</h1>
         <p class="subtitle">Temukan dan beli tiket untuk konser favorit Anda</p>
 
-        <!-- tempat card event -->
-        <div id="eventContainer" class="event-grid"></div>
-    </main>
+        <div id="eventContainer" class="event-scroll"></div>
+    </section>
+    <section id="about" class="section">
+        <h2 class="section-title">Tentang ConcertTix</h2>
+        <p class="section-desc">
+            ConcertTix adalah platform pemesanan tiket konser termudah dan tercepat.
+            Kami menyediakan informasi lengkap dan metode pembayaran yang aman.
+        </p>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+        <h2 class="section-title">Hubungi Kami</h2>
+        <p class="section-desc">Email: support@concerttix.com</p>
+    </section>
 
     <script src="./js/index.js"></script>
 </body>
