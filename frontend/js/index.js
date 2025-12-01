@@ -7,6 +7,27 @@ const registerBtn = document.querySelector('[data-auth="register"]');
 const logoutBtn = document.querySelector('[data-auth="logout"]');
 const userLabel = document.querySelector('[data-auth="user"]');
 
+const slider = document.querySelector('.event-scroll');
+
+let isDown = false;
+let startX;
+let scrollLeft;
+
+slider.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - slider.offsetLeft;
+    scrollLeft = slider.scrollLeft;
+});
+slider.addEventListener('mouseleave', () => isDown = false);
+slider.addEventListener('mouseup', () => isDown = false);
+slider.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - slider.offsetLeft;
+    const walk = (x - startX) * 2; // fast scroll
+    slider.scrollLeft = scrollLeft - walk;
+});
+
 async function checkSession() {
     try {
         const res = await fetch("../api/index.php?action=user_show", {
@@ -59,6 +80,21 @@ const API_EVENTS = "../api/index.php?action=events";
 
 const eventContainer = document.getElementById("eventContainer");
 
+
+eventContainer.classList.add("event-scroll");
+
+eventContainer.innerHTML += `
+    <div class="event-card">
+        <img src="https://source.unsplash.com/400x300/?concert" />
+        <div class="event-content">
+            <h3 class="event-title">Judul Konser</h3>
+            <p class="price-label">Mulai dari</p>
+            <p class="price">Rp 250.000</p>
+            <button class="btn-buy">Beli Tiket</button>
+        </div>
+    </div>
+`;
+
 async function loadEvents() {
     try {
         const res = await fetch(API_EVENTS);
@@ -84,11 +120,7 @@ async function loadEvents() {
 }
 
 function renderEvents(events) {
-    eventContainer.innerHTML = `
-        <div class="event-list">
-            ${events.map(ev => createEventCard(ev)).join("")}
-        </div>
-    `;
+    eventContainer.innerHTML = events.map(ev => createEventCard(ev)).join("");
 }
 
 function createEventCard(ev) {
