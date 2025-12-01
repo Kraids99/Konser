@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../css/event.css" />
+    <title>Admin | Events</title>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div>
+          <div class="brand">Konser Admin Panel</div>
+          <div class="brand-sub">Kelola data konser</div>
+        </div>
+
+        <div class="user-chip">
+          <div class="avatar">A</div>
+          <div class="user-meta">
+            <span class="name">Admin</span>
+            <span class="role">Administrator</span>
+          </div>
+        </div>
+        <nav class="nav">
+          <a href="./event.html" class="active">
+            <span class="nav-icon"
+              ><img src="../../assets/calendar.png" alt="Calendar Icon"
+            /></span>
+            Events
+          </a>
+          <a href="../ticket/ticket.html">
+            <span class="nav-icon"
+              ><img src="../../assets/ticket_v4.png" alt="Ticket Icon"
+            /></span>
+            Tickets
+          </a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <header class="page-header">
+          <div>
+            <h1>Events Management</h1>
+            <p class="page-subtitle">Kelola semua data events</p>
+          </div>
+        </header>
+
+        <section class="search-section">
+          <div class="search-bar">
+            <input
+              type="search"
+              id="searchInput"
+              placeholder="Cari event atau artis..."
+            />
+          </div>
+          <button id="addEventBtn2" class="btn-primary">+ Tambah Event</button>
+        </section>
+
+        <div id="eventsList" class="events-grid"></div>
+      </main>
+    </div>
+    <script src="../../js/event.js"></script>
+  </body>
+</html>

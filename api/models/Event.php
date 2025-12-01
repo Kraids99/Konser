@@ -12,7 +12,7 @@ class Event {
 
     public function createEvent($event_name, $event_location, $event_date, $quota)
     {
-        $query = "INSERT INTO {$this->table} ($event_name, $event_location, $event_date, $quota) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO {$this->table} (event_name, event_location, event_date, quota) VALUES (?, ?, ?, ?)";
 
         // siapin query
         $stmt = mysqli_prepare($this->db, $query);
@@ -40,11 +40,15 @@ class Event {
 
     public function getAll(){
         $query = "SELECT * FROM events";
-
         $stmt = mysqli_prepare($this->db, $query);
+        
+        // execute query
+        mysqli_stmt_execute($stmt);
 
-        // jalankan query
-        return mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        // mengubah seluruh hasil query menjadi array asosiatif
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
     public function findByName($event_name)

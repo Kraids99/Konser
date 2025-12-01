@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../css/eventCreate.css" />
+    <title>Admin | Tambah Event</title>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div>
+          <div class="brand">Konser Admin Panel</div>
+          <div class="brand-sub">Kelola data konser</div>
+        </div>
+
+        <div class="user-chip">
+          <div class="avatar">A</div>
+          <div class="user-meta">
+            <span class="name">Admin</span>
+            <span class="role">Administrator</span>
+          </div>
+        </div>
+        <nav class="nav">
+          <a href="./event.html" class="active">
+            <span class="nav-icon"
+              ><img src="../../assets/calendar.png" alt="Calendar Icon"
+            /></span>
+            Events
+          </a>
+          <a href="../ticket/ticket.html">
+            <span class="nav-icon"
+              ><img src="../../assets/ticket.png" alt="Ticket Icon"
+            /></span>
+            Tickets
+          </a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <header class="page-header">
+          <h1>Tambah Event Baru</h1>
+          <p class="page-subtitle">Lengkapi data event di bawah ini</p>
+        </header>
+
+        <section class="card">
+          <form id="eventForm" class="form-vertical">
+            <div class="form-group">
+              <label for="event_name">Nama Event</label>
+              <input
+                type="text"
+                id="event_name"
+                name="event_name"
+                placeholder="Masukkan nama event"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="event_location">Lokasi</label>
+              <input
+                type="text"
+                id="event_location"
+                name="event_location"
+                placeholder="Lokasi venue event"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="event_date">Tanggal</label>
+              <input
+                type="date"
+                id="event_date"
+                name="event_date"
+                placeholder="dd/mm/yyyy"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="quota">Kuota (opsional)</label>
+              <input
+                type="number"
+                id="quota"
+                name="quota"
+                min="0"
+                placeholder="50000"
+              />
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn-ghost" id="backBtn">
+                Kembali
+              </button>
+              <button type="submit" class="btn-primary">Simpan</button>
+            </div>
+          </form>
+          <div id="formStatus" class="status"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../js/eventCreate.js"></script>
+  </body>
+</html>

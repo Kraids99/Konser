@@ -1,49 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
-    <link rel="stylesheet" href="./css/login.css">
-</head>
+    <link rel="stylesheet" href="./css/login.css" />
+  </head>
 
-<body>
+  <body>
     <div class="overlay"></div>
 
     <div class="card">
-        <div style="text-align:center; margin-bottom:8px;">
-            <img src="./assets/logo.png" alt="Logo" style="width:30px; height:auto;">
+      <div style="text-align: center; margin-bottom: 8px">
+        <img
+          src="./assets/logo.png"
+          alt="Logo"
+          style="width: 30px; height: auto"
+        />
+      </div>
+
+      <h2>Welcome Back</h2>
+      <p class="subtitle">Log in to discover and manage your concerts</p>
+
+      <form id="loginForm">
+        <div>
+          <label for="email">Email Address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            required
+          />
         </div>
 
+        <div>
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
 
-        <h2>Welcome Back</h2>
-        <p class="subtitle">Log in to discover and manage your concerts</p>
+        <label class="remember-wrap">
+          <input type="checkbox" id="remember" name="remember" />
+          Remember me
+        </label>
 
-        <form id="loginForm">
-            <div>
-                <label for="email">Email Address</label>
-                <input id="email" name="email" type="email" placeholder="Enter your email" required>
-            </div>
+        <button type="submit">Login</button>
+        <p id="navigate-register">
+          Don't have an account? <a id="signup" href="register.html">Sign up</a>
+        </p>
+      </form>
 
-            <div>
-                <label for="password">Password</label>
-                <input id="password" name="password" type="password" placeholder="Enter your password" required>
-            </div>
-
-            <label class="remember-wrap">
-                <input type="checkbox" id="remember" name="remember">
-                Remember me
-            </label>
-
-            <button type="submit">Login</button>
-            <p id="navigate-register">Don't have an account? <a id="signup" href="register.html">Sign up</a></p>
-        </form>
-
-        <div id="msg"></div>
+      <div id="msg"></div>
     </div>
 
     <script src="./js/login.js"></script>
-</body>
-
+  </body>
 </html>

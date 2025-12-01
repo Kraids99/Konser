@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../css/ticketCreate.css" />
+    <title>Admin | Tambah Ticket</title>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div>
+          <div class="brand">Konser Admin Panel</div>
+          <div class="brand-sub">Kelola data konser</div>
+        </div>
+
+        <div class="user-chip">
+          <div class="avatar">A</div>
+          <div class="user-meta">
+            <span class="name">Admin</span>
+            <span class="role">Administrator</span>
+          </div>
+        </div>
+        <nav class="nav">
+          <a href="../event/event.html">
+            <span class="nav-icon"
+              ><img src="../../assets/calendar.png" alt="Calendar Icon"
+            /></span>
+            Events
+          </a>
+          <a href="./ticket.html" class="active">
+            <span class="nav-icon"
+              ><img src="../../assets/ticket.png" alt="Ticket Icon"
+            /></span>
+            Tickets
+          </a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <header class="page-header">
+          <h1>Tambah Ticket Baru</h1>
+          <p class="page-subtitle">Lengkapi detail ticket baru</p>
+        </header>
+
+        <section class="card">
+          <form id="ticketForm" class="form-vertical">
+            <div class="form-group">
+              <label for="event_id">Event</label>
+              <select id="event_id" name="event_id" required>
+                <option value="">Pilih event</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="ticket_type">Tipe Ticket</label>
+              <input
+                type="text"
+                id="ticket_type"
+                name="ticket_type"
+                placeholder="VIP / Reguler / Festival"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="price">Harga</label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                min="0"
+                step="1000"
+                placeholder="500000"
+                required
+              />
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn-ghost" id="backBtn">
+                Kembali
+              </button>
+              <button type="submit" class="btn-primary">Simpan</button>
+            </div>
+          </form>
+          <div id="formStatus" class="status"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../js/ticketCreate.js"></script>
+  </body>
+</html>
