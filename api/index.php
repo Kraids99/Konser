@@ -46,7 +46,7 @@ switch ($action) {
     case 'user_update_photo':
         $user->updateProfilePicture();
     break;
-
+    //fajar tambahin ini
     case 'user_delete':
         $user->deleteAccount();
     break;

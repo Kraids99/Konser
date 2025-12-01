@@ -1,6 +1,5 @@
 const namaInput = document.getElementById("nama");
 const emailInput = document.getElementById("email");
-const telpInput = document.getElementById("telp"); // optional, boleh tidak ada di form
 
 const editBtn = document.getElementById("editBtn");
 const saveBtn = document.getElementById("saveBtn");
