@@ -51,7 +51,7 @@ async function handleLogout() {
 
 
 /* ============================
-   EVENT LIST
+EVENT LIST
 ============================ */
 
 // **INI PATH YANG BENAR UNTUK index.html**
