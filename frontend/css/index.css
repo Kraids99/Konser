@@ -1,0 +1,171 @@
+/* ========== PAGE ROOT ========== */
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f5f7fb;
+    color: #222;
+}
+
+/* ========== NAVBAR ========== */
+.navbar {
+    background: #ffffff;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e6e6e6;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.nav-menu a {
+    margin: 0 15px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #555;
+}
+
+.nav-menu .active {
+    background: #eaf1ff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #175ddc;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.user-info {
+    font-size: 13px;
+}
+
+/* ========== PAGE CONTENT ========== */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.title {
+    font-size: 28px;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    color: #777;
+    margin-bottom: 30px;
+}
+
+/* ========== GRID ========== */
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+}
+
+/* ========== CARD ========== */
+.event-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 1px solid #eee;
+    transition: 0.2s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* IMAGE */
+.event-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+/* BADGE */
+.badge {
+    position: absolute;
+    background: #2563eb;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    top: 14px;
+    right: 14px;
+    font-weight: 600;
+}
+
+/* CONTENT */
+.event-content {
+    padding: 18px 22px;
+}
+
+.event-title {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.event-artist {
+    color: #777;
+    margin-bottom: 14px;
+}
+
+.info {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+/* PRICE */
+.price-label {
+    font-size: 13px;
+    color: #999;
+}
+
+.price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #175ddc;
+    margin-bottom: 12px;
+}
+
+/* BUTTON */
+.btn-buy {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.btn-buy:hover {
+    background: #1e4fc7;
+}

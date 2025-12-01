@@ -2,6 +2,10 @@ const form = document.getElementById("loginForm");
 const msg = document.getElementById("msg");
 const endpoint = "../api/index.php?action=login";
 
+const addButtonsUser = [
+  document.getElementById("addButtonUser")
+].filter(Boolean);
+
 async function login(e) {
   e.preventDefault(); // supaya tidak reload halaman
 
@@ -31,7 +35,7 @@ async function login(e) {
       if (role === "admin") {
         window.location.href = "./admin/event/event.html";
       } else {
-        window.location.href = ".index.html";
+        window.location.href = "index.html";
       }
     } else {
       msg.textContent = "Login gagal: " + (result.message || "unknown error");
@@ -40,5 +44,11 @@ async function login(e) {
     msg.textContent = "Request gagal: " + err.message;
   }
 }
+
+addButtonsUser.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    window.location.href = "./frontend/index.html";
+  });
+});
 
 form.addEventListener("submit", login);
