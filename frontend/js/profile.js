@@ -1,5 +1,6 @@
 const namaInput = document.getElementById("nama");
 const emailInput = document.getElementById("email");
+const telpInput = document.getElementById("telp"); // opsional, ada jika field telp disediakan
 
 const editBtn = document.getElementById("editBtn");
 const saveBtn = document.getElementById("saveBtn");
@@ -69,6 +70,7 @@ window.goBack = goBack;
 let originalValues = {
     nama: "",
     email: "",
+    telp: ""
 };
 
 async function loadProfile() {
@@ -88,10 +90,12 @@ async function loadProfile() {
 
         namaInput.value = data.username || "";
         emailInput.value = data.email || "";
+        if (telpInput) telpInput.value = data.telp || "";
 
         originalValues = {
             nama: data.username || "",
             email: data.email || "",
+            telp: data.telp || ""
         };
 
         document.querySelector(".profile-name").textContent = data.username || "Pengguna";
@@ -120,6 +124,7 @@ function toggleEdit(isEditing) {
 async function saveProfile() {
     const nama = namaInput.value.trim();
     const email = emailInput.value.trim();
+    const telp = telpInput ? telpInput.value.trim() : "";
 
     if (!nama || !email) {
         setMsg(profileMsg, "Nama dan email wajib diisi.", true);
@@ -132,7 +137,7 @@ async function saveProfile() {
     form.append("username", nama);
     form.append("email", email);
     if (telpInput) {
-        form.append("telp", telpInput.value.trim());
+        form.append("telp", telp);
     }
 
     try {
@@ -148,7 +153,7 @@ async function saveProfile() {
         return;
     }
 
-    originalValues = { nama, email, telp: telpInput ? telpInput.value.trim() : "" };
+    originalValues = { nama, email, telp };
     toggleEdit(false);
     setMsg(profileMsg, "Profil berhasil diperbarui.");
     document.querySelector(".profile-name").textContent = nama;
