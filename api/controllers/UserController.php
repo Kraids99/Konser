@@ -240,4 +240,47 @@ class UserController
             echo json_encode(["status" => "error", "message" => "Gagal update foto di database!"]);
         }
     }
+
+    // POST hapus akun user saat ini
+    public function deleteAccount()
+    {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') 
+        {
+            http_response_code(405);
+            echo json_encode(["status" => "error", "message" => "Method harus POST!"]);
+            return;
+        }
+
+        $userId = $this->requireSessionUser();
+        if (!$userId) 
+        {
+            http_response_code(401);
+            echo json_encode(["status" => "error", "message" => "Tidak ada sesi login!"]);
+            return;
+        }
+
+        // hapus token remember-me lebih dulu
+        $this->user->deleteToken($userId);
+
+        $deleted = $this->user->deleteUser($userId);
+        if ($deleted) 
+        {
+            if (session_status() === PHP_SESSION_NONE) 
+            {
+                session_start();
+            }
+            session_unset();
+            session_destroy();
+
+            http_response_code(200);
+            echo json_encode(["status" => "success", "message" => "Akun dihapus!"]);
+        } 
+        else 
+        {
+            http_response_code(500);
+            echo json_encode(["status" => "error", "message" => "Gagal menghapus akun!"]);
+        }
+    }
 }

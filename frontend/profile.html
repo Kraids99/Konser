@@ -22,10 +22,18 @@
         <div class="profile-header">
             <img src="./img/profile.jpg" class="profile-photo" alt="Foto Profil">
             <h3 class="profile-name">Nama Pengguna</h3>
-            <p class="profile-email">email@gmail.com</p>
-            <a href="#" class="change-photo">Ganti foto profil</a>
+
+            <div class="photo-actions column">
+                <a href="#" class="change-photo">Ganti foto profil</a>
+                <div class="photo-buttons">
+                    <a href="#" class="remove-photo" style="display:none;">Batal</a>
+                    <button id="savePhotoBtn" class="save-photo-btn" style="display:none;">Simpan</button>
+                </div>
+            </div>
+            <input type="file" id="photoInput" accept="image/png, image/jpeg" hidden>
+            <p id="photoMsg" class="form-note"></p>
         </div>
-        
+
         <!-- INFORMASI AKUN -->
         <div class="card">
             <h3>Informasi Akun</h3>
@@ -40,16 +48,12 @@
                 <input id="email" type="email" value="email@gmail.com" readonly>
             </div>
 
-            <div class="info-row">
-                <label>No. Telepon</label>
-                <input id="telp" type="text" value="08123456789" readonly>
-            </div>
-
             <div class="btn-group">
                 <button id="editBtn" class="edit-btn">Edit Profil</button>
                 <button id="saveBtn" class="save-btn" style="display:none;">Simpan</button>
                 <button id="cancelBtn" class="cancel-btn" style="display:none;">Batal</button>
             </div>
+            <p id="profileMsg" class="form-note"></p>
         </div>
 
         <!-- UBAH PASSWORD -->
@@ -58,26 +62,28 @@
 
             <div class="info-row">
                 <label>Password Lama</label>
-                <input id="oldPass" type="password" placeholder="Masukkan password lama">
+                <input id="oldPass" type="password" placeholder="Masukkan password lama" autocomplete="new-password">
             </div>
 
             <div class="info-row">
                 <label>Password Baru</label>
-                <input id="newPass" type="password" placeholder="Masukkan password baru">
+                <input id="newPass" type="password" placeholder="Masukkan password baru" autocomplete="new-password">
             </div>
 
             <div class="info-row">
                 <label>Konfirmasi Password</label>
-                <input id="confirmPass" type="password" placeholder="Konfirmasi password baru">
+                <input id="confirmPass" type="password" placeholder="Konfirmasi password baru" autocomplete="new-password">
             </div>
 
             <button class="change-password-btn">Ubah Password</button>
+            <p id="passwordMsg" class="form-note"></p>
         </div>
 
         <!-- LOGOUT & DELETE -->
         <div class="danger-section">
             <button class="logout-btn">Logout</button>
             <button class="delete-btn">Hapus Akun</button>
+            <p id="dangerMsg" class="form-note"></p>
         </div>
     </div>
 

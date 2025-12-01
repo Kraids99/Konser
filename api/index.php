@@ -47,6 +47,10 @@ switch ($action) {
         $user->updateProfilePicture();
     break;
 
+    case 'user_delete':
+        $user->deleteAccount();
+    break;
+
     case 'events':
         $event->index();
     break;
