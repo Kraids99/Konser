@@ -1,5 +1,6 @@
 const API_EVENTS = "../../../api/index.php?action=events";
 const API_DELETE = "../../../api/index.php?action=event_delete";
+const API_LOCATIONS = "../../../api/index.php?action=locations";
 
 const eventsListEl = document.getElementById("eventsList");
 const searchInput = document.getElementById("searchInput");
@@ -9,9 +10,26 @@ const addButtons = [
 ].filter(Boolean);
 
 let rawEvents = [];
+let locationMap = {};
+
+async function fetchLocations() {
+  try {
+    const res = await fetch(API_LOCATIONS, { credentials: "include" });
+    const data = await res.json();
+    if (!res.ok || data.status !== "success") return;
+    (data.data || []).forEach((loc) => {
+      locationMap[loc.location_id] = loc;
+    });
+  } catch (err) {
+    
+  }
+}
 
 async function fetchEvents() {
   try {
+    if (!Object.keys(locationMap).length) {
+      await fetchLocations();
+    }
     const res = await fetch(API_EVENTS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") {
@@ -37,8 +55,8 @@ function renderEvents(list) {
       const quota = ev.quota ?? 0;
       const sold = ev.tickets_sold ?? 0;
       const pct = quota ? Math.min(100, Math.round((sold / quota) * 100)) : 0;
+      const loc = locationMap[ev.location_id] || {};
 
-      // Format date
       const eventDate = new Date(ev.event_date);
       const dateFormatted = eventDate.toLocaleDateString("id-ID", {
         day: "numeric",
@@ -46,7 +64,6 @@ function renderEvents(list) {
         year: "numeric",
       });
 
-      // Format time
       const timeFormatted =
         eventDate.toLocaleTimeString("id-ID", {
           hour: "2-digit",
@@ -74,7 +91,7 @@ function renderEvents(list) {
 
                     <div class="detail-item">
                         <span class="detail-icon"><img src="../../assets/location.png" alt="calender"/></span>
-                        <span>${escapeHtml(ev.event_location || "-")}</span>
+                        <span>${escapeHtml(loc.address || "-")} (${escapeHtml(loc.city || "-")})</span>
                     </div>
                 </div>
                 
@@ -128,8 +145,9 @@ function applySearch() {
   const term = (searchInput.value || "").toLowerCase();
   const filtered = rawEvents.filter((ev) => {
     const name = (ev.event_name || "").toLowerCase();
-    const loc = (ev.event_location || "").toLowerCase();
-    return name.includes(term) || loc.includes(term);
+    const loc = locationMap[ev.location_id] || {};
+    const locText = `${loc.city || ""} ${loc.address || ""}`.toLowerCase();
+    return name.includes(term) || locText.includes(term);
   });
   renderEvents(filtered);
 }

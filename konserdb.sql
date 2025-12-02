@@ -18,6 +18,32 @@ CREATE TABLE `users` (
     PRIMARY KEY (`user_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
+-- Tabel locations
+CREATE TABLE `locations` (
+    `location_id` INT NOT NULL AUTO_INCREMENT,
+    `city` VARCHAR(100) NOT NULL,
+    `address` VARCHAR(255) NOT NULL,
+    `latitude` DECIMAL(10, 6) NOT NULL,
+    `longitude` DECIMAL(10, 6) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    PRIMARY KEY (`location_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+-- Dummy data locations
+INSERT INTO `locations` (
+    `location_id`,
+    `city`,
+    `address`,
+    `latitude`,
+    `longitude`,
+    `created_at`
+) VALUES
+    (1, 'Jakarta', 'Jakarta Stadium', -6.200000, 106.816700, NOW()),
+    (2, 'Surabaya', 'Surabaya Grand Hall', -7.257500, 112.752100, NOW()),
+    (3, 'Jakarta', 'GBK Senayan Jakarta', -6.218300, 106.802600, NOW()),
+    (4, 'Jakarta', 'JIEXPO Kemayoran', -6.147500, 106.844700, NOW()),
+    (5, 'Bali', 'Bali Beach Arena', -8.409500, 115.188900, NOW());
+
 -- Dummy data users
 INSERT INTO `users` (
     `user_id`,
@@ -29,36 +55,37 @@ INSERT INTO `users` (
     `created_at`
 ) VALUES
     (1, 'admin', 'admin', 'admin@gmail.com', SHA2('admin123', 256), 'admin.jpg', NOW()),
-    (2, 'user', 'alex', 'alex@example.com', SHA2('alex123', 256), 'alex.png', NOW()),
-    (3, 'user', 'vergie', 'vergie@example.com', SHA2('vergie123', 256), 'vergie.png', NOW()),
-    (4, 'user', 'fajar', 'fajar@example.com', SHA2('fajar123', 256), 'fajar.png', NOW()),
-    (5, 'user', 'rafael', 'rafael@konser.com', SHA2('rafael123', 256), 'rafael.jpg', NOW());
+    (2, 'user', 'alex', 'alex@gmail.com', SHA2('alex123', 256), 'alex.png', NOW()),
+    (3, 'user', 'vergie', 'vergie@gmail.com', SHA2('vergie123', 256), 'vergie.png', NOW()),
+    (4, 'user', 'fajar', 'fajar@gmail.com', SHA2('fajar123', 256), 'fajar.png', NOW()),
+    (5, 'user', 'rafael', 'rafael@gmail.com', SHA2('rafael123', 256), 'rafael.jpg', NOW());
 
 -- Tabel events
 CREATE TABLE `events` (
     `event_id` INT NOT NULL AUTO_INCREMENT,
     `event_name` VARCHAR(150) NOT NULL,
-    `event_location` VARCHAR(150) NOT NULL,
+    `location_id` INT NOT NULL,
     `event_date` DATE NOT NULL,
     `quota` INT DEFAULT 0,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    PRIMARY KEY (`event_id`)
+    PRIMARY KEY (`event_id`),
+    CONSTRAINT `fk_event_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`location_id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- Dummy data events
 INSERT INTO `events` (
     `event_id`,
     `event_name`,
-    `event_location`,
+    `location_id`,
     `event_date`,
     `quota`,
     `created_at`
 ) VALUES
-    (1, 'Coldplay World Tour', 'Jakarta Stadium', '2026-02-14', 50000, NOW()),
-    (2, 'Dewa 19 Reunion', 'Surabaya Grand Hall', '2026-05-10', 12000, NOW()),
-    (3, 'We The Fest', 'GBK Senayan Jakarta', '2026-08-22', 35000, NOW()),
-    (4, 'Java Jazz Festival', 'JIEXPO Kemayoran', '2026-03-05', 20000, NOW()),
-    (5, 'Alan Walker Concert', 'Bali Beach Arena', '2026-11-30', 18000, NOW());
+    (1, 'Coldplay World Tour', 1, '2026-02-14', 50000, NOW()),
+    (2, 'Dewa 19 Reunion', 2, '2026-05-10', 12000, NOW()),
+    (3, 'We The Fest', 3, '2026-08-22', 35000, NOW()),
+    (4, 'Java Jazz Festival', 4, '2026-03-05', 20000, NOW()),
+    (5, 'Alan Walker Concert', 5, '2026-11-30', 18000, NOW());
 
 -- Tabel tickets
 CREATE TABLE `tickets` (

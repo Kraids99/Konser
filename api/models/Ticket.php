@@ -4,6 +4,8 @@ class Ticket {
 
     private $db;
     private $table = "tickets";
+    private $eventTable = "events";
+    private $locationTable = "locations";
 
     public function __construct($conn)
     {
@@ -38,12 +40,13 @@ class Ticket {
     }
 
     public function getAll(){
-        $query = "SELECT * FROM tickets";
+        $query = "SELECT t.*, e.event_name, e.location_id, l.city, l.address, l.latitude, l.longitude
+                  FROM {$this->table} t
+                  JOIN {$this->eventTable} e ON t.event_id = e.event_id
+                  LEFT JOIN {$this->locationTable} l ON e.location_id = l.location_id";
 
         $stmt = mysqli_prepare($this->db, $query);
-
         mysqli_stmt_execute($stmt);
-
         $result = mysqli_stmt_get_result($stmt);
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
@@ -51,7 +54,11 @@ class Ticket {
     //sama saja kek findById
     public function getById($id)
     {
-        $query = "SELECT * FROM {$this->table} WHERE ticket_id = ?";
+        $query = "SELECT t.*, e.event_name, e.location_id, l.city, l.address, l.latitude, l.longitude
+                  FROM {$this->table} t
+                  JOIN {$this->eventTable} e ON t.event_id = e.event_id
+                  LEFT JOIN {$this->locationTable} l ON e.location_id = l.location_id
+                  WHERE t.ticket_id = ?";
 
         // siapin query
         $stmt = mysqli_prepare($this->db, $query);
