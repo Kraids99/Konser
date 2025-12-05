@@ -81,21 +81,7 @@ const API_EVENTS = "../api/index.php?action=events";
 const API_LOCATIONS = "../api/index.php?action=locations";
 
 const eventContainer = document.getElementById("eventContainer");
-
 eventContainer.classList.add("event-scroll");
-
-
-eventContainer.innerHTML += `
-    <div class="event-card">
-        <img src="https://source.unsplash.com/400x300/?concert" />
-        <div class="event-content">
-            <h3 class="event-title">Judul Konser</h3>
-            <p class="price-label">Mulai dari</p>
-            <p class="price">Rp 250.000</p>
-            <button class="btn-buy">Beli Tiket</button>
-        </div>
-    </div>
-`;
 
 let locationMap = {};
 
@@ -176,17 +162,27 @@ function createEventCard(ev) {
 
                 <div class="event-price">Mulai dari Rp ${(ev.price_min || 0).toLocaleString()}</div>
 
-                <button class="btn btn-primary" onclick="buyTicket(${ev.event_id})">
+                <a class="btn btn-primary" data-event-id="${ev.event_id}" href="./ticket.html?id=${ev.event_id}">
                     Beli Tiket
-                </button>
+                </a>
             </div>
         </div>
     `;
 }
 
 function buyTicket(eventId) {
-  window.location.href = `./event_detail.html?id=${eventId}`;
+  window.location.href = `./ticket.html?id=${eventId}`;
 }
+
+// handle click delegation to keep redirect consistent
+eventContainer.addEventListener("click", (e) => {
+  const target = e.target.closest("[data-event-id]");
+  if (!target) return;
+  const id = target.getAttribute("data-event-id");
+  if (!id) return;
+  e.preventDefault();
+  buyTicket(id);
+});
 
 // jalankan
 loadEvents();

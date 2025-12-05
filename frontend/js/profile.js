@@ -1,28 +1,28 @@
-const namaInput = document.getElementById("nama");
-const emailInput = document.getElementById("email");
-const telpInput = document.getElementById("telp"); // opsional, ada jika field telp disediakan
+let namaInput;
+let emailInput;
+let telpInput; // opsional, ada jika field telp disediakan
 
-const editBtn = document.getElementById("editBtn");
-const saveBtn = document.getElementById("saveBtn");
-const cancelBtn = document.getElementById("cancelBtn");
+let editBtn;
+let saveBtn;
+let cancelBtn;
 
-const changePassBtn = document.querySelector(".change-password-btn");
-const logoutBtn = document.querySelector(".logout-btn");
-const deleteBtn = document.querySelector(".delete-btn");
+let changePassBtn;
+let logoutBtn;
+let deleteBtn;
 
-const oldPassInput = document.getElementById("oldPass");
-const newPassInput = document.getElementById("newPass");
-const confirmPassInput = document.getElementById("confirmPass");
+let oldPassInput;
+let newPassInput;
+let confirmPassInput;
 
-const profileMsg = document.getElementById("profileMsg");
-const passwordMsg = document.getElementById("passwordMsg");
-const dangerMsg = document.getElementById("dangerMsg");
-const photoMsg = document.getElementById("photoMsg");
-const photoInput = document.getElementById("photoInput");
-const changePhotoLink = document.querySelector(".change-photo");
-const removePhotoLink = document.querySelector(".remove-photo");
-const savePhotoBtn = document.getElementById("savePhotoBtn");
-const photoEl = document.querySelector(".profile-photo");
+let profileMsg;
+let passwordMsg;
+let dangerMsg;
+let photoMsg;
+let photoInput;
+let changePhotoLink;
+let removePhotoLink;
+let savePhotoBtn;
+let photoEl;
 
 const API_USER = "../api/index.php?action=user_show";
 const API_UPDATE_PROFILE = "../api/index.php?action=user_update";
@@ -74,6 +74,7 @@ let originalValues = {
 };
 
 async function loadProfile() {
+    if (!namaInput || !emailInput) return;
     try {
         const res = await fetch(API_USER, { credentials: "include" });
         if (!res.ok) {
@@ -111,6 +112,7 @@ async function loadProfile() {
 }
 
 function toggleEdit(isEditing) {
+    if (!namaInput || !emailInput) return;
     const readonly = !isEditing;
     namaInput.toggleAttribute("readonly", readonly);
     emailInput.toggleAttribute("readonly", readonly);
@@ -149,17 +151,17 @@ async function saveProfile() {
         const result = await res.json();
 
         if (!res.ok || result.status !== "success") {
-        setMsg(profileMsg, result.message || "Gagal memperbarui profil.", true);
-        return;
-    }
+            setMsg(profileMsg, result.message || "Gagal memperbarui profil.", true);
+            return;
+        }
 
-    originalValues = { nama, email, telp };
-    toggleEdit(false);
-    setMsg(profileMsg, "Profil berhasil diperbarui.");
-    document.querySelector(".profile-name").textContent = nama;
-  } catch (err) {
-    setMsg(profileMsg, "Error: " + err.message, true);
-  }
+        originalValues = { nama, email, telp };
+        toggleEdit(false);
+        setMsg(profileMsg, "Profil berhasil diperbarui.");
+        document.querySelector(".profile-name").textContent = nama;
+    } catch (err) {
+        setMsg(profileMsg, "Error: " + err.message, true);
+    }
 }
 
 function cancelEdit() {
@@ -321,27 +323,63 @@ async function savePhoto() {
 }
 
 // Jalankan saat halaman dimuat
-loadProfile();
+function initProfilePage() {
+    namaInput = document.getElementById("nama");
+    emailInput = document.getElementById("email");
+    telpInput = document.getElementById("telp");
 
-editBtn.addEventListener("click", () => toggleEdit(true));
-saveBtn.addEventListener("click", saveProfile);
-cancelBtn.addEventListener("click", cancelEdit);
-changePassBtn.addEventListener("click", changePassword);
-logoutBtn.addEventListener("click", handleLogout);
-deleteBtn.addEventListener("click", handleDelete);
-if (changePhotoLink && photoInput) {
-    changePhotoLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        photoInput.click();
-    });
-    photoInput.addEventListener("change", (e) => previewSelectedPhoto(e.target.files[0]));
+    editBtn = document.getElementById("editBtn");
+    saveBtn = document.getElementById("saveBtn");
+    cancelBtn = document.getElementById("cancelBtn");
+
+    changePassBtn = document.querySelector(".change-password-btn");
+    logoutBtn = document.querySelector(".logout-btn");
+    deleteBtn = document.querySelector(".delete-btn");
+
+    oldPassInput = document.getElementById("oldPass");
+    newPassInput = document.getElementById("newPass");
+    confirmPassInput = document.getElementById("confirmPass");
+
+    profileMsg = document.getElementById("profileMsg");
+    passwordMsg = document.getElementById("passwordMsg");
+    dangerMsg = document.getElementById("dangerMsg");
+    photoMsg = document.getElementById("photoMsg");
+    photoInput = document.getElementById("photoInput");
+    changePhotoLink = document.querySelector(".change-photo");
+    removePhotoLink = document.querySelector(".remove-photo");
+    savePhotoBtn = document.getElementById("savePhotoBtn");
+    photoEl = document.querySelector(".profile-photo");
+
+    if (!editBtn || !saveBtn || !cancelBtn) {
+        console.warn("Elemen profil tidak lengkap, inisialisasi dilewati.");
+        return;
+    }
+
+    loadProfile();
+
+    editBtn.addEventListener("click", () => toggleEdit(true));
+    saveBtn.addEventListener("click", saveProfile);
+    cancelBtn.addEventListener("click", cancelEdit);
+    changePassBtn?.addEventListener("click", changePassword);
+    logoutBtn?.addEventListener("click", handleLogout);
+    deleteBtn?.addEventListener("click", handleDelete);
+
+    if (changePhotoLink && photoInput) {
+        changePhotoLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            photoInput.click();
+        });
+        photoInput.addEventListener("change", (e) => previewSelectedPhoto(e.target.files[0]));
+    }
+    if (removePhotoLink) {
+        removePhotoLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            clearPhotoSelection();
+        });
+    }
+    if (savePhotoBtn) {
+        savePhotoBtn.addEventListener("click", savePhoto);
+    }
 }
-if (removePhotoLink) {
-    removePhotoLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        clearPhotoSelection();
-    });
-}
-if (savePhotoBtn) {
-    savePhotoBtn.addEventListener("click", savePhoto);
-}
+
+document.addEventListener("DOMContentLoaded", initProfilePage);

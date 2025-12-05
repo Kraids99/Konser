@@ -10,15 +10,15 @@ class Transaction {
         $this->db = $conn;
     }
 
-    public function createTransaction($user_id, $ticket_id, $ticket_token, $quantity, $total)
+    public function createTransaction($user_id, $ticket_id, $ticket_token, $quantity, $total, $metode_pembayaran)
     {
-        $query = "INSERT INTO {$this->table} (user_id, ticket_id, ticket_token, quantity, total) VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO {$this->table} (user_id, ticket_id, ticket_token, quantity, total, metode_pembayaran) VALUES (?, ?, ?, ?, ?, ?)";
 
         // siapin query
         $stmt = mysqli_prepare($this->db, $query);
 
         // ngisi data
-        mysqli_stmt_bind_param($stmt, "iisid", $user_id, $ticket_id, $ticket_token, $quantity, $total);
+        mysqli_stmt_bind_param($stmt, "iisids", $user_id, $ticket_id, $ticket_token, $quantity, $total, $metode_pembayaran);
         
         // jalankan query
         return mysqli_stmt_execute($stmt);
@@ -54,13 +54,13 @@ class Transaction {
         return mysqli_fetch_assoc($result);
     }
 
-    public function updateTransaction($id, $user_id, $ticket_id, $ticket_token, $quantity, $total)
+    public function updateTransaction($id, $user_id, $ticket_id, $ticket_token, $quantity, $total, $metode_pembayaran)
     {
-        $query = "UPDATE {$this->table} SET user_id = ?, ticket_id = ?, ticket_token = ?, quantity = ?, total = ? WHERE transaction_id = ?";
+        $query = "UPDATE {$this->table} SET user_id = ?, ticket_id = ?, ticket_token = ?, quantity = ?, total = ?, metode_pembayaran = ? WHERE transaction_id = ?";
 
         $stmt = mysqli_prepare($this->db, $query);
 
-        mysqli_stmt_bind_param($stmt, "iisidi", $user_id, $ticket_id, $ticket_token, $quantity, $total, $id);
+        mysqli_stmt_bind_param($stmt, "iisidsi", $user_id, $ticket_id, $ticket_token, $quantity, $total,$metode_pembayaran, $id);
 
         return mysqli_stmt_execute($stmt);
     }

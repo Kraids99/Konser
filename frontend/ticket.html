@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pesan Tiket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/ticketPage.css" />
+</head>
+<body>
+  <div class="backdrop"></div>
+  <main class="ticket-modal">
+    <header class="modal-header">
+      <div>
+        <h1 class="title" id="eventTitle">Coldplay World Tour</h1>
+        <p class="subtitle" id="eventArtist">Various Artists</p>
+      </div>
+      <button class="icon-btn" aria-label="Tutup">&times;</button>
+    </header>
+
+    <section class="modal-body">
+      <div class="info-col">
+        <div class="hero-placeholder">
+          <div class="hero-shot" id="heroShot"></div>
+        </div>
+        <p class="about" id="eventAbout">Tentang ConcertiTx</p>
+        <ul class="meta-list">
+          <li>
+            <span class="meta-icon"><img src="./assets/calendar_v2.png" alt="" /></span>
+            <div>
+              <div class="meta-label" id="eventDate">14 Februari 2026</div>
+            </div>
+          </li>
+          <li>
+            <span class="meta-icon"><img src="./assets/calendar_event_v2.png" alt="" /></span>
+            <div>
+              <div class="meta-label" id="eventTime">07:00 WIB</div>
+            </div>
+          </li>
+          <li>
+            <span class="meta-icon"><img src="./assets/location.png" alt="" /></span>
+            <div>
+              <div class="meta-label" id="eventLocation">Jakarta Stadium, Jakarta</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="ticket-col">
+        <h3 class="section-title">Pilih Tiket</h3>
+        <div id="ticketOptions" class="ticket-options"></div>
+      </div>
+    </section>
+
+    <footer class="summary">
+      <div class="total">
+        <div class="summary-label">Total (<span id="totalTickets">0</span> tiket)</div>
+        <div id="totalPrice" class="summary-value">Rp 0</div>
+      </div>
+      <button id="payBtn" class="primary-btn">Lanjut ke Pembayaran</button>
+    </footer>
+  </main>
+
+  <script src="./js/ticketPage.js"></script>
+</body>
+</html>

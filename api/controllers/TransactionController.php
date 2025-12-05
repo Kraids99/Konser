@@ -58,15 +58,16 @@ class TransactionController
         $ticket_token = $_POST['ticket_token'] ?? '';
         $quantity = $_POST['quantity'] ?? 0;
         $total = $_POST['total'] ?? 0;
+        $metode_pembayaran = $_POST['metode_pembayaran'] ?? 0;
 
         // ngecek id, type, price
-        if(!$user_id || !$ticket_id || !$ticket_token || !$quantity || !$total)
+        if(!$user_id || !$ticket_id || !$ticket_token || !$quantity || !$total || !$metode_pembayaran)
         {
             echo json_encode(["status" => "error", "message" => "user_id, ticket_id, ticket_token, quantity, dan total tidak ada!"]);
             return;
         }
 
-        $result = $this->transaction->createTransaction($user_id, $ticket_id, $ticket_token, $quantity, $total);
+        $result = $this->transaction->createTransaction($user_id, $ticket_id, $ticket_token, $quantity, $total, $metode_pembayaran);
 
         // ngecek sukses atau engga
         if($result) 
@@ -90,14 +91,15 @@ class TransactionController
         $ticket_token = $_POST['ticket_token'] ?? '';
         $quantity = $_POST['quantity'] ?? 0;
         $total = $_POST['total'] ?? 0;
+        $metode_pembayaran = $_POST['metode_pembayaran'] ?? 0;
 
-        if(!$transaction_id || !$user_id || !$ticket_id || !$ticket_token || !$quantity || !$total) 
+        if(!$transaction_id || !$user_id || !$ticket_id || !$ticket_token || !$quantity || !$total || $metode_pembayaran) 
         {
             echo json_encode(["status" => "error", "message" => "transaction_id, user_id, ticket_id, ticket_token, quantity, dan total tidak ada!"]);
             return;
         }
 
-        $result = $this->transaction->updateTransaction($transaction_id, $user_id, $ticket_id, $ticket_token, $quantity, $total);
+        $result = $this->transaction->updateTransaction($transaction_id, $user_id, $ticket_id, $ticket_token, $quantity, $total, $metode_pembayaran);
 
         if($result) 
         {

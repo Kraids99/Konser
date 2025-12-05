@@ -120,6 +120,7 @@ CREATE TABLE `transactions` (
     `ticket_token` VARCHAR(255) NOT NULL,
     `quantity` INT DEFAULT 1,
     `total` DECIMAL(10, 2),
+    `metode_pembayaran` VARCHAR(10) NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
     PRIMARY KEY (`transaction_id`),
     CONSTRAINT `fk_transaction_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,

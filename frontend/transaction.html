@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/transaction.css" />
+</head>
+<body>
+  <div class="backdrop"></div>
+  <main class="checkout-modal">
+    <header class="modal-header">
+      <h1>Checkout</h1>
+      <button class="icon-btn" aria-label="Tutup">&times;</button>
+    </header>
+
+    <section class="checkout-body">
+      <div class="column left">
+        <h3 class="section-title">Detail Pesanan</h3>
+
+        <div class="order-card">
+          <div class="order-texts">
+            <div class="order-title" id="orderEventTitle">Judul Event</div>
+            <div class="order-sub" id="orderTicketType">Tipe Tiket</div>
+            <div class="order-sub" id="orderQtyPrice">Jumlah x Harga</div>
+          </div>
+          <div class="order-price" id="orderPrice">Rp 0</div>
+        </div>
+
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <span id="subtotalPrice">Rp 0</span>
+        </div>
+        <div class="summary-line">
+          <span>Biaya Layanan</span>
+          <span id="feePrice">Rp 0</span>
+        </div>
+        <div class="summary-line total">
+          <span>Total</span>
+          <span id="totalPrice">Rp 0</span>
+        </div>
+      </div>
+
+      <div class="column right">
+        <h3 class="section-title">Informasi Pembayaran</h3>
+
+        <label class="field">
+          <span>Nama Lengkap</span>
+          <input id="buyerName" type="text" placeholder="John Doe" />
+        </label>
+
+        <label class="field">
+          <span>Email</span>
+          <input id="buyerEmail" type="email" placeholder="john@example.com" />
+        </label>
+
+        <label class="field">
+          <span>Nomor Telepon</span>
+          <input id="buyerPhone" type="tel" placeholder="08123456789" />
+        </label>
+
+        <div class="field">
+          <span>Metode Pembayaran</span>
+          <div class="pay-tabs">
+            <button class="tab-btn active" data-pay-method="ewallet">
+              <span class="tab-ico">📱</span>E-Wallet
+            </button>
+            <button class="tab-btn" data-pay-method="bank">
+              <span class="tab-ico">🏦</span>Transfer Bank
+            </button>
+          </div>
+        </div>
+
+        <div class="field pay-panel" id="walletSection">
+          <span>Pilih E-Wallet</span>
+          <div class="wallet-list">
+            <label class="wallet-item">
+              <input type="radio" name="wallet" checked />
+              <span>GoPay</span>
+            </label>
+            <label class="wallet-item">
+              <input type="radio" name="wallet" />
+              <span>OVO</span>
+            </label>
+            <label class="wallet-item">
+              <input type="radio" name="wallet" />
+              <span>DANA</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field pay-panel hidden" id="bankSection">
+          <span>Pilih Transfer Bank</span>
+          <div class="bank-list">
+            <label class="bank-item">
+              <input type="radio" name="bank" checked />
+              <span>BCA</span>
+            </label>
+            <label class="bank-item">
+              <input type="radio" name="bank" />
+              <span>BRI</span>
+            </label>
+            <label class="bank-item">
+              <input type="radio" name="bank" />
+              <span>Mandiri</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="checkout-footer">
+      <button class="primary-btn" id="payNowBtn">Bayar Rp 0</button>
+    </footer>
+  </main>
+</body>
+<script src="./js/transaction.js"></script>
+</html>
