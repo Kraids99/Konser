@@ -54,18 +54,24 @@ class EventController
         header('Content-Type: application/json');
 
         $name = $_POST['event_name'] ?? '';
-        $location = $_POST['event_location'] ?? '';
+        $locationId = $_POST['location_id'] ?? '';
         $date = $_POST['event_date'] ?? '';
         $quota = $_POST['quota'] ?? 0;
 
         // ngecek nama lokasi dan tanggal
-        if(!$name || !$location || !$date)
+        if(!$name || !$locationId || !$date)
         {
             echo json_encode(["status" => "error", "message" => "Event name, location, date tidak ada!"]);
             return;
         }
 
-        $result = $this->event->createEvent($name, $location, $date, $quota);
+        if(!$this->event->locationValid((int)$locationId))
+        {
+            echo json_encode(["status" => "error", "message" => "Lokasi tidak ditemukan!"]);
+            return;
+        }
+
+        $result = $this->event->createEvent($name, (int)$locationId, $date, $quota);
 
         // ngecek sukses atau engga
         if($result) 
@@ -85,18 +91,24 @@ class EventController
 
         $id = $_POST['event_id'] ?? '';
         $name = $_POST['event_name'] ?? '';
-        $location = $_POST['event_location'] ?? '';
+        $locationId = $_POST['location_id'] ?? '';
         $date = $_POST['event_date'] ?? '';
         $quota = $_POST['quota'] ?? 0;
 
         // ngecek id , nama, lokasi, dan tanggal
-        if(!$id || !$name || !$location || !$date) 
+        if(!$id || !$name || !$locationId || !$date) 
         {
             echo json_encode(["status" => "error", "message" => "Event name, location, date tidak ada!"]);
             return;
         }
 
-        $result = $this->event->updateEvent($id, $name, $location, $date, $quota);
+        if(!$this->event->locationValid((int)$locationId))
+        {
+            echo json_encode(["status" => "error", "message" => "Lokasi tidak ditemukan!"]);
+            return;
+        }
+
+        $result = $this->event->updateEvent($id, $name, (int)$locationId, $date, $quota);
 
         // cek sukses atau engga
         if($result) 

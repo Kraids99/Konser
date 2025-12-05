@@ -7,6 +7,7 @@ require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/EventController.php';
 require_once __DIR__ . '/controllers/TicketController.php';
 require_once __DIR__ . '/controllers/TransactionController.php';
+require_once __DIR__ . '/controllers/LocationController.php';
 
 $action = $_GET['action'] ?? $_POST['action'] ?? null;
 
@@ -17,6 +18,7 @@ $user = new UserController($conn);
 $event = new EventController($conn);
 $ticket = new TicketController($conn);
 $transaction = new TransactionController($conn);
+$location = new LocationController($conn);
 
 switch ($action) {
     case 'register':
@@ -109,6 +111,14 @@ switch ($action) {
 
     case 'transaction_delete':
         $transaction->delete();
+    break;
+
+    case 'locations':
+        $location->index();
+    break;
+
+    case 'location_show':
+        $location->show();
     break;
 
     default:

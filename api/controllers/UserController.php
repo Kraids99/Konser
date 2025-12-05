@@ -129,7 +129,30 @@ class UserController
             return;
         }
 
+        $oldPassword = $_POST['old_password'] ?? '';
         $newPassword = $_POST['new_password'] ?? '';
+        if (!$oldPassword || !$newPassword)
+        {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "Password lama dan baru wajib diisi!"]);
+            return;
+        }
+
+        $user = $this->user->getById($userId);
+        if (!$user)
+        {
+            http_response_code(404);
+            echo json_encode(["status" => "error", "message" => "User tidak ditemukan!"]);
+            return;
+        }
+        
+        if (hash('sha256', $oldPassword) !== $user['password'])
+        {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "Password lama salah!"]);
+            return;
+        }
+
         if (strlen($newPassword) < 6) 
         {
             http_response_code(400);

@@ -35,6 +35,7 @@ function renderTickets(list) {
     .map((t) => {
       const price = parseFloat(t.price || 0);
       const formattedPrice = price.toLocaleString("id-ID");
+      const locText = `${t.address || "-"}${t.city ? " (" + t.city + ")" : ""}`;
 
       return `
             <article class="ticket-card-modern">
@@ -55,7 +56,7 @@ function renderTickets(list) {
                     </div>
                     <div class="detail-item">
                         <span class="detail-icon"><img src="../../assets/calendar_event_v2.png" alt="Calendar Icon" /></span>
-                        <span>Event ID: ${t.event_id}</span>
+                        <span>Lokasi: ${escapeHtml(locText)}</span>
                     </div>
                 </div>
                 
@@ -97,8 +98,12 @@ function applySearch() {
     const type = (t.ticket_type || "").toLowerCase();
     const eventName = (t.event_name || "").toLowerCase();
     const eventId = String(t.event_id || "");
+    const locText = `${t.city || ""} ${t.address || ""}`.toLowerCase();
     return (
-      type.includes(term) || eventName.includes(term) || eventId.includes(term)
+      type.includes(term) ||
+      eventName.includes(term) ||
+      eventId.includes(term) ||
+      locText.includes(term)
     );
   });
   renderTickets(filtered);

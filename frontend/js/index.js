@@ -14,32 +14,32 @@ let startX;
 let scrollLeft;
 
 slider.addEventListener('mousedown', (e) => {
-    isDown = true;
-    startX = e.pageX - slider.offsetLeft;
-    scrollLeft = slider.scrollLeft;
+  isDown = true;
+  startX = e.pageX - slider.offsetLeft;
+  scrollLeft = slider.scrollLeft;
 });
 slider.addEventListener('mouseleave', () => isDown = false);
 slider.addEventListener('mouseup', () => isDown = false);
 slider.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 2; // fast scroll
-    slider.scrollLeft = scrollLeft - walk;
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - slider.offsetLeft;
+  const walk = (x - startX) * 2; // fast scroll
+  slider.scrollLeft = scrollLeft - walk;
 });
 
 async function checkSession() {
-    try {
-        const res = await fetch("../api/index.php?action=user_show", {
-            credentials: "include",
-        });
-        if (!res.ok) throw new Error("not logged in");
+  try {
+    const res = await fetch("../api/index.php?action=user_show", {
+      credentials: "include",
+    });
+    if (!res.ok) throw new Error("not logged in");
 
-        const { data } = await res.json();
+    const { data } = await res.json();
         showLoggedIn(data?.username || "User");
-    } catch {
-        showLoggedOut();
-    }
+  } catch {
+    showLoggedOut();
+  }
 }
 
 function showLoggedIn(username) {
@@ -47,8 +47,10 @@ function showLoggedIn(username) {
     registerBtn.style.display = "none";
     logoutBtn.style.display = "inline-flex";
 
+  if (userLabel) {
     userLabel.style.display = "inline-flex";
     userLabel.textContent = username;
+}
 }
 
 function showLoggedOut() {
@@ -61,13 +63,13 @@ function showLoggedOut() {
 }
 
 async function handleLogout() {
-    try {
-        await fetch("../api/index.php?action=logout", {
-            method: "POST",
-            credentials: "include",
-        });
+  try {
+    await fetch("../api/index.php?action=logout", {
+      method: "POST",
+      credentials: "include",
+    });
     } catch { }
-    showLoggedOut();
+  showLoggedOut();
 }
 
 
@@ -75,13 +77,13 @@ async function handleLogout() {
 EVENT LIST
 ============================ */
 
-// **INI PATH YANG BENAR UNTUK index.html**
 const API_EVENTS = "../api/index.php?action=events";
+const API_LOCATIONS = "../api/index.php?action=locations";
 
 const eventContainer = document.getElementById("eventContainer");
 
-
 eventContainer.classList.add("event-scroll");
+
 
 eventContainer.innerHTML += `
     <div class="event-card">
@@ -95,51 +97,71 @@ eventContainer.innerHTML += `
     </div>
 `;
 
+let locationMap = {};
+
+async function loadLocations() {
+  try {
+    const res = await fetch(API_LOCATIONS);
+    const data = await res.json();
+    if (!res.ok || data.status !== "success") return;
+    (data.data || []).forEach((loc) => {
+      locationMap[loc.location_id] = loc;
+    });
+  } catch {}
+}
+
 async function loadEvents() {
-    try {
-        const res = await fetch(API_EVENTS);
-        const data = await res.json();
-
-        if (!res.ok || data.status !== "success") {
-            eventContainer.innerHTML = `<p style="color:var(--muted);">Gagal memuat event.</p>`;
-            return;
-        }
-
-        const events = data.data;
-
-        if (!events.length) {
-            eventContainer.innerHTML = `<p style="color:var(--muted);">Belum ada event tersedia.</p>`;
-            return;
-        }
-
-        renderEvents(events);
-
-    } catch (err) {
-        eventContainer.innerHTML = `<p style="color:var(--muted);">Error: ${err.message}</p>`;
+  try {
+    if (!Object.keys(locationMap).length) {
+      await loadLocations();
     }
+    const res = await fetch(API_EVENTS);
+    const data = await res.json();
+
+    if (!res.ok || data.status !== "success") {
+      eventContainer.innerHTML = `<p style="color:var(--muted);">Gagal memuat event.</p>`;
+      return;
+    }
+
+    const events = data.data || [];
+
+    if (!events.length) {
+      eventContainer.innerHTML = `<p style="color:var(--muted);">Belum ada event tersedia.</p>`;
+      return;
+    }
+
+    renderEvents(events);
+  } catch (err) {
+    eventContainer.innerHTML = `<p style="color:var(--muted);">Error: ${err.message}</p>`;
+  }
 }
 
 function renderEvents(events) {
-    eventContainer.innerHTML = events.map(ev => createEventCard(ev)).join("");
+  eventContainer.innerHTML = events.map((ev) => createEventCard(ev)).join("");
 }
 
 function createEventCard(ev) {
-    const imgUrl = ev.image_url || "https://images.unsplash.com/photo-1511379938547-c1f69419868d";
-    const dateObj = new Date(ev.event_date);
+  const imgUrl =
+    ev.image_url ||
+    "https://images.unsplash.com/photo-1511379938547-c1f69419868d";
+  const dateObj = new Date(ev.event_date);
 
-    const dateFormatted = dateObj.toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-    });
+  const dateFormatted = dateObj.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
-    const timeFormatted = dateObj.toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
+  const timeFormatted =
+    dateObj.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
     }) + " WIB";
 
-    return `
+  const loc = locationMap[ev.location_id] || {};
+
+  return `
         <div class="event-card">
             <img src="${imgUrl}" alt="${ev.event_name}">
             <div class="event-content">
@@ -148,8 +170,8 @@ function createEventCard(ev) {
 
                 <div class="event-info">
                     📅 ${dateFormatted} <br>
-                    ⏰ ${timeFormatted} <br>
-                    📍 ${ev.event_location}
+                    🕒 ${timeFormatted} <br>
+                    📍 ${loc.address || "-"}, ${loc.city || "-"}
                 </div>
 
                 <div class="event-price">Mulai dari Rp ${(ev.price_min || 0).toLocaleString()}</div>
@@ -163,14 +185,14 @@ function createEventCard(ev) {
 }
 
 function buyTicket(eventId) {
-    window.location.href = `./event_detail.html?id=${eventId}`;
+  window.location.href = `./event_detail.html?id=${eventId}`;
 }
 
 // jalankan
 loadEvents();
 
 if (logoutBtn) {
-    logoutBtn.addEventListener("click", handleLogout);
+  logoutBtn.addEventListener("click", handleLogout);
 }
 
 checkSession();
