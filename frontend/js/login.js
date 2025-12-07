@@ -35,7 +35,7 @@ async function login(e) {
       if (role === "admin") {
         window.location.href = "./admin/event/event.html";
       } else {
-        window.location.href = "index.html";
+        window.location.href = "./customerDashboard.html";
       }
     } else {
       msg.textContent = "Login gagal: " + (result.message || "unknown error");

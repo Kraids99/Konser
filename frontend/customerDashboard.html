@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ConcertTix - Konser Mendatang</title>
-    <link rel="stylesheet" href="./css/index.css" />
+    <title>ConcertTix - Dashboard Customer</title>
+    <link rel="stylesheet" href="./css/customerDashboard.css" />
   </head>
 
   <body>
@@ -20,13 +20,20 @@
       </nav>
 
       <div class="nav-actions">
-        <a href="./login.html" class="nav-link-btn" data-auth="login">Login</a>
-        <a
-          href="./register.html"
-          class="nav-link-btn primary"
-          data-auth="register"
-          >Register</a
-        >
+        <div class="nav-user" data-auth="user" style="display: none">
+          <button class="nav-user-toggle" type="button">
+            <img src="./assets/userDefault.png" class="avatar" />
+            <div class="user-info">
+              <span class="username">Customer</span>
+              <span class="email"></span>
+            </div>
+            <span class="caret">▾</span>
+          </button>
+          <div class="nav-dropdown">
+            <a href="./profile.html">Profil Saya</a>
+            <a href="./transaction.html">History</a>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -46,6 +53,7 @@
 
       <div id="eventContainer" class="event-scroll"></div>
     </section>
+
     <section id="about" class="section">
       <h2 class="section-title">Tentang ConcertTix</h2>
       <p class="section-desc">
@@ -57,8 +65,9 @@
     <section id="contact" class="section">
       <h2 class="section-title">Hubungi Kami</h2>
       <p class="section-desc">Email: support@concerttix.com</p>
+      <p class="section-desc">Telepon: 081247662275</p>
     </section>
 
-    <script src="./js/index.js?v=2"></script>
+    <script src="./js/customerDashboard.js"></script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 /* ============================
-   NAVBAR LOGIN STATE HANDLER
+   NAVBAR / USER STATE
 ============================ */
 
 const loginBtn = document.querySelector('[data-auth="login"]');
@@ -9,28 +9,29 @@ const userLabel = document.querySelector('[data-auth="user"]');
 const userAvatar = document.querySelector('[data-auth="user"] .avatar');
 const userDropdown = document.querySelector('[data-auth="user"] .nav-dropdown');
 const userToggle = document.querySelector('[data-auth="user"] .nav-user-toggle');
+const displayName = document.querySelector('[data-auth="user"] .username');
 const PROFILE_BASE = "../api/storage/profile/";
 const navMenu = document.querySelector(".nav-menu");
 
-const slider = document.querySelector('.event-scroll');
+const slider = document.querySelector(".event-scroll");
 
 let isDown = false;
 let startX;
 let scrollLeft;
 
 if (slider) {
-  slider.addEventListener('mousedown', (e) => {
+  slider.addEventListener("mousedown", (e) => {
     isDown = true;
     startX = e.pageX - slider.offsetLeft;
     scrollLeft = slider.scrollLeft;
   });
-  slider.addEventListener('mouseleave', () => isDown = false);
-  slider.addEventListener('mouseup', () => isDown = false);
-  slider.addEventListener('mousemove', (e) => {
+  slider.addEventListener("mouseleave", () => (isDown = false));
+  slider.addEventListener("mouseup", () => (isDown = false));
+  slider.addEventListener("mousemove", (e) => {
     if (!isDown) return;
     e.preventDefault();
     const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 2; // fast scroll
+    const walk = (x - startX) * 2;
     slider.scrollLeft = scrollLeft - walk;
   });
 }
@@ -81,7 +82,8 @@ function initUserDropdown() {
 
   document.addEventListener("click", (e) => {
     if (!userDropdown.classList.contains("open")) return;
-    const inside = userDropdown.contains(e.target) || userToggle.contains(e.target);
+    const inside =
+      userDropdown.contains(e.target) || userToggle.contains(e.target);
     if (!inside) closeUserDropdown();
   });
 
@@ -100,9 +102,25 @@ async function checkSession() {
     if (!res.ok) throw new Error("not logged in");
 
     const { data } = await res.json();
-    showLoggedIn(data || {});
+    const user = data || {};
+    const role = (user.role || "").toLowerCase();
+
+    if (role === "admin") {
+      window.location.href = "./admin/event/event.html";
+      return;
+    }
+
+    if (role && role !== "customer" && role !== "user") {
+      throw new Error("not customer");
+    }
+
+    if (displayName) {
+      displayName.textContent = user.username || "Customer";
+    }
+
+    showLoggedIn(user);
   } catch {
-    showLoggedOut();
+    window.location.href = "./login.html";
   }
 }
 
@@ -155,10 +173,10 @@ async function handleLogout() {
       method: "POST",
       credentials: "include",
     });
-    } catch { }
+  } catch {}
   showLoggedOut();
+  window.location.href = "./login.html";
 }
-
 
 /* ============================
 EVENT LIST
@@ -231,9 +249,6 @@ function filterEvents(query) {
 }
 
 function createEventCard(ev) {
-  const imgUrl =
-    ev.image_url ||
-    "https://images.unsplash.com/photo-1511379938547-c1f69419868d";
   const dateObj = new Date(ev.event_date);
 
   const dateFormatted = dateObj.toLocaleDateString("id-ID", {
@@ -252,33 +267,37 @@ function createEventCard(ev) {
   const loc = locationMap[ev.location_id] || {};
 
   return `
-        <div class="event-card">
-            <img src="${imgUrl}" alt="${ev.event_name}">
-            <div class="event-content">
-                <div class="event-title">${ev.event_name}</div>
-                <div class="event-artist">${ev.artist_name || "Various Artists"}</div>
-
-                <div class="event-info">
-                    📅 ${dateFormatted} <br>
-                    🕒 ${timeFormatted} <br>
-                    📍 ${loc.address || "-"}, ${loc.city || "-"}
-                </div>
-
-                <div class="event-price">Mulai dari Rp ${(ev.price_min || 0).toLocaleString()}</div>
-
-                <a class="btn btn-primary" data-event-id="${ev.event_id}" href="./ticket.html?id=${ev.event_id}">
-                    Beli Tiket
-                </a>
-            </div>
+    <div class="event-card">
+      <div class="event-content">
+        <div class="event-header">
+          <div>
+            <div class="event-title">${ev.event_name}</div>
+            <div class="event-artist">${ev.artist_name || "Various Artists"}</div>
+          </div>
+          <span class="event-badge">upcoming</span>
         </div>
-    `;
+
+        <div class="event-meta">
+          <span><span class="icon">📅</span>${dateFormatted}</span>
+          <span><span class="icon">⏰</span>${timeFormatted}</span>
+          <span><span class="icon">📍</span>${loc.address || "-"}${loc.city ? ", " + loc.city : ""}</span>
+        </div>
+
+        <div class="event-price">Mulai dari Rp ${(ev.price_min || 0).toLocaleString()}</div>
+
+        <div class="event-actions">
+          <a class="btn-outline" data-event-id="${ev.event_id}" href="./ticket.html?id=${ev.event_id}">Lihat Detail</a>
+          <a class="btn-primary" data-event-id="${ev.event_id}" href="./ticket.html?id=${ev.event_id}">Pesan</a>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function buyTicket(eventId) {
   window.location.href = `./ticket.html?id=${eventId}`;
 }
 
-// handle click delegation to keep redirect consistent
 if (eventContainer) {
   eventContainer.addEventListener("click", (e) => {
     const target = e.target.closest("[data-event-id]");
@@ -290,7 +309,6 @@ if (eventContainer) {
   });
 }
 
-// jalankan
 if (eventContainer) {
   loadEvents();
 }
@@ -299,4 +317,8 @@ if (eventSearch) {
   eventSearch.addEventListener("input", (e) => filterEvents(e.target.value));
 }
 
-// Landing page: keep login/register visible; skip session-based toggle.
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", handleLogout);
+}
+
+checkSession();
