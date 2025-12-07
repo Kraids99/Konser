@@ -50,6 +50,7 @@ body {
     background: #2563EB;
     color: #fff;
 }
+
 .nav-actions {
     display: flex;
     align-items: center;
@@ -441,13 +442,6 @@ body {
 }
 
 /* SECTIONS (About / Contact) */
-.section {
-    padding: 80px 80px;
-    text-align: center;
-    background: #fff;
-    margin-top: 40px;
-}
-
 .section-title {
     font-size: 26px;
     margin-bottom: 10px;
@@ -458,4 +452,153 @@ body {
     font-size: 16px;
     max-width: 700px;
     margin: 0 auto;
+}
+
+.about-section {
+    padding: 40px 72px;
+    background: #f8faff;
+}
+
+.about-container {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    margin-bottom: 60px;
+    padding-left: 90px;
+    padding-right: 120px;
+}
+
+.about-image img {
+    width: 100%;
+    max-height: 300px;
+    margin-top: 10px;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.about-content {
+    flex: 1;
+}
+
+.about-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.about-text {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+/* visi misi */
+.mv-section {
+    text-align: center;
+}
+
+.mv-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.mv-subtitle {
+    color: #555;
+    margin-bottom: 32px;
+}
+
+.mv-cards {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.mv-card {
+    background: white;
+    padding: 24px;
+    width: 530px;
+    border-radius: 14px;
+    text-align: left;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.mv-card h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.mv-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* footer / contact */
+.contact-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: #111;
+    color: #fff;
+    padding: 20px 50px 0 50px;
+    font-family: Arial, sans-serif;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.contact-container {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.contact-right {
+    margin-left: auto;
+    margin-bottom: 20px;
+}
+
+.contact-left {
+    width: 48%;
+    margin-bottom: 20px;
+}
+
+.contact-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.social-icon {
+    width: 17px;
+    height: 17px;
+}
+
+.contact-info p,
+.social-links p {
+    margin: 8px 0;
+    gap: 10px;
+}
+
+.contact-info a,
+.social-links a {
+    color: #1e90ff;
+    text-decoration: none;
+}
+
+.contact-info a:hover,
+.social-links a:hover {
+    text-decoration: underline;
+}
+
+.copyright {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 20px;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    padding-top: 10px;
 }

@@ -1,63 +1,124 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ConcertTix - Konser Mendatang</title>
-    <link rel="stylesheet" href="./css/index.css" />
-  </head>
 
-  <body>
-    <header class="navbar">
-      <div class="nav-left">
-        <div class="logo">🎵 ConcertTix</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ConcertTix - Konser Mendatang</title>
+  <link rel="stylesheet" href="./css/index.css" />
+</head>
+
+<body>
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="logo">🎵 ConcertTix</div>
+    </div>
+
+    <nav class="nav-menu">
+      <a href="#dashboard" class="active">Dashboard</a>
+      <a href="#about">About Us</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="./login.html" class="nav-link-btn" data-auth="login">Login</a>
+      <a href="./register.html" class="nav-link-btn primary" data-auth="register">Register</a>
+    </div>
+  </header>
+
+  <section id="dashboard" class="container">
+    <h1 class="title">Konser Mendatang</h1>
+    <p class="subtitle">Temukan dan beli tiket untuk konser favorit Anda</p>
+
+    <div class="search-wrapper">
+      <input type="text" id="eventSearch" class="search-input" placeholder="Cari event berdasarkan nama..."
+        aria-label="Cari event" />
+    </div>
+
+    <div id="eventContainer" class="event-scroll"></div>
+  </section>
+
+  <section id="about" class="about-section">
+    <div class="about-container">
+      <div class="about-image">
+        <img src="./assets/konserindex.avif" alt="About ConcertTix" />
       </div>
 
-      <nav class="nav-menu">
-        <a href="#dashboard" class="active">Dashboard</a>
-        <a href="#about">About Us</a>
-        <a href="#contact">Contact</a>
-      </nav>
-
-      <div class="nav-actions">
-        <a href="./login.html" class="nav-link-btn" data-auth="login">Login</a>
-        <a
-          href="./register.html"
-          class="nav-link-btn primary"
-          data-auth="register"
-          >Register</a
-        >
+      <div class="about-content">
+        <h2 class="about-title">Kisah Kami</h2>
+        <p class="about-text">
+          ConcertTix lahir dari kecintaan kami terhadap musik live. Kami tahu betapa berharganya
+          momen-momen saat artis favorit tampil di atas panggung, dan kami ingin memastikan setiap
+          penggemar dapat mengalaminya tanpa kesulitan. Kami memulai dengan ide sederhana: membuat
+          proses pembelian tiket konser menjadi transparan, aman, dan menyenangkan.
+        </p>
+        <p class="about-text">
+          Dari awal yang sederhana, kami berkembang menjadi platform terpercaya yang menghubungkan
+          ribuan penggemar dengan acara musik yang tak terlupakan.
+        </p>
       </div>
-    </header>
+    </div>
 
-    <section id="dashboard" class="container">
-      <h1 class="title">Konser Mendatang</h1>
-      <p class="subtitle">Temukan dan beli tiket untuk konser favorit Anda</p>
-
-      <div class="search-wrapper">
-        <input
-          type="text"
-          id="eventSearch"
-          class="search-input"
-          placeholder="Cari event berdasarkan nama..."
-          aria-label="Cari event"
-        />
-      </div>
-
-      <div id="eventContainer" class="event-scroll"></div>
-    </section>
-    <section id="about" class="section">
-      <h2 class="section-title">Tentang ConcertTix</h2>
-      <p class="section-desc">
-        ConcertTix adalah platform pemesanan tiket konser termudah dan tercepat.
-        Kami menyediakan informasi lengkap dan metode pembayaran yang aman.
+    <!-- MISI & VISI -->
+    <div class="mv-section">
+      <h2 class="mv-title">Misi & Visi Kami</h2>
+      <p class="mv-subtitle">
+        Tujuan kami adalah membuat musik live lebih mudah diakses oleh semua orang, di mana saja.
       </p>
-    </section>
 
-    <section id="contact" class="section">
-      <h2 class="section-title">Hubungi Kami</h2>
-      <p class="section-desc">Email: support@concerttix.com</p>
-    </section>
+      <div class="mv-cards">
+        <div class="mv-card">
+          <h3>Misi</h3>
+          <p>
+            Menyediakan platform yang intuitif, aman, dan andal untuk menemukan dan membeli
+            tiket konser, memastikan pengalaman yang mulus dari penemuan hingga hari acara.
+          </p>
+        </div>
+
+        <div class="mv-card">
+          <h3>Visi</h3>
+          <p>
+            Menjadi platform tiket konser nomor satu di dunia, dikenal karena inovasi,
+            fokus pada pengguna, serta komitmen kuat untuk menyatukan orang melalui kekuatan musik live.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section">
+    <footer class="contact-footer">
+      <div class="contact-container">
+        <!-- Left side: Contact Information -->
+        <div class="contact-left">
+          <h2 class="contact-title">Hubungi Kami</h2>
+          <div class="contact-info">
+            <p><strong>Email:</strong> <a href="mailto:concerttix@gmail.com">concerttix@gmail.com</a></p>
+            <p><strong>Telepon:</strong> <a href="tel:+6281234567890">+62 812 3456 7890</a></p>
+            <p><strong>Alamat:</strong> Jl. Merdeka No. 123, Jakarta</p>
+          </div>
+        </div>
+
+        <!-- Right side: Social Media Links -->
+        <div class="contact-right">
+          <h2 class="contact-title">Temukan Kami</h2>
+          <div class="social-links">
+            <p>
+              <img src="./assets/insta.png" class="social-icon" alt="Instagram">
+              <strong>Instagram:</strong>
+              <a href="https://instagram.com/" target="_blank">@concerttixid</a>
+            </p>
+            <p>
+              <img src="./assets/yutub.png" class="social-icon" alt="YouTube">
+              <strong>YouTube:</strong>
+              <a href="https://youtube.com/" target="_blank">ConcertTix</a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <p class="copyright">© 2025 ConcertTix. All rights reserved.</p>
+    </footer>
+  </section>
 
     <script type="module" src="./js/landingPage.js"></script>
   </body>

@@ -1,0 +1,142 @@
+/* WRAPPER KEMBALI */
+.top-back-wrapper {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 999;
+}
+
+.back-btn {
+    padding: 8px 16px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.back-btn:hover {
+    background: #f0f0f0;
+}
+
+/* body */
+body {
+    margin: 0;
+    padding: 0;
+    background: #f8fafc;
+    font-family: "Inter", sans-serif;
+    color: #111;
+}
+
+.history-page {
+    padding: 40px 200px 80px 200px;
+    min-height: 100vh;
+}
+
+.history-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    margin-top: 30px;
+}
+
+.history-subtitle {
+    font-size: 16px;
+    color: #5b6573;
+    margin-bottom: 35px;
+}
+
+.history-container {
+    background: white;
+    padding: 50px;
+    border-radius: 16px;
+    border: 1.5px solid #e2e8f0;
+    min-height: 250px;
+}
+
+/* EMPTY STATE */
+.history-empty {
+    text-align: center;
+    color: #4a5568;
+}
+
+.empty-icon img {
+    width: 70px;
+    height: 70px;
+    opacity: 0.7;
+    margin-bottom: 15px;
+}
+
+.history-empty h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.history-empty p {
+    font-size: 15px;
+    color: #6b7280;
+}
+
+/* HISTORY ITEM */
+.history-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    background: #fff;
+}
+
+.history-img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.history-info {
+    flex: 1;
+}
+
+.history-info h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.history-info p {
+    margin: 4px 0;
+    font-size: 15px;
+    color: #333;
+}
+
+.history-item {
+    border: 1.5px solid #e2e8f0;
+    transition: 0.2s ease;
+}
+
+.history-item:hover {
+    background: #d8d8d8;
+    border-color: #b1b9c4;
+}
+
+.history-info h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.history-detail-label {
+    font-weight: 600;
+    color: #111;
+}
+
+/* Biar tulisan detail tidak terlalu mepet ke atas */
+.history-info {
+    margin-top: 3px;
+}
