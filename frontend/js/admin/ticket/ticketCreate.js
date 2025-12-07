@@ -1,5 +1,4 @@
-const API_CREATE = "../../../api/index.php?action=ticket_create";
-const API_EVENTS = "../../../api/index.php?action=events";
+import { API } from "../../index.js";
 
 const form = document.getElementById("ticketForm");
 const statusEl = document.getElementById("formStatus");
@@ -8,7 +7,7 @@ const selectEvent = document.getElementById("event_id");
 
 async function loadEvents() {
   try {
-    const res = await fetch(API_EVENTS, { credentials: "include" });
+    const res = await fetch(API.EVENTS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") {
       selectEvent.innerHTML = '<option value="">Gagal memuat event</option>';
@@ -52,25 +51,25 @@ async function handleSubmit(e) {
   const formData = new FormData(form);
 
   try {
-    const res = await fetch(API_CREATE, {
+    const res = await fetch(API.TICKET_CREATE, {
       method: "POST",
       body: formData,
       credentials: "include",
     });
     const data = await res.json();
     if (res.ok && data.status === "success") {
-      statusEl.textContent = "✓ Berhasil menambah ticket. Mengalihkan...";
+      statusEl.textContent = "Berhasil menambah ticket. Mengalihkan...";
       statusEl.className = "status success";
       setTimeout(() => {
         window.location.href = "./ticket.html";
       }, 700);
     } else {
       statusEl.textContent =
-        "✗ Gagal: " + (data.message || "Terjadi kesalahan.");
+        "Gagal: " + (data.message || "Terjadi kesalahan.");
       statusEl.className = "status error";
     }
   } catch (err) {
-    statusEl.textContent = "✗ Error: " + err.message;
+    statusEl.textContent = "Error: " + err.message;
     statusEl.className = "status error";
   }
 }

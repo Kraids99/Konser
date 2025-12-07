@@ -1,315 +1,55 @@
-/* ============================
-   NAVBAR LOGIN STATE HANDLER
-============================ */
+// base urlnya yang ada di api (pakai path absolut biar aman di halaman nested)
+export const API_BASE = "/konser/api/index.php";
 
-const loginBtn = document.querySelector('[data-auth="login"]');
-const registerBtn = document.querySelector('[data-auth="register"]');
-const logoutBtn = document.querySelector('[data-auth="logout"]');
-const userLabel = document.querySelector('[data-auth="user"]');
-const userAvatar = document.querySelector('[data-auth="user"] .avatar');
-const userDropdown = document.querySelector('[data-auth="user"] .nav-dropdown');
-const userToggle = document.querySelector('[data-auth="user"] .nav-user-toggle');
-const PROFILE_BASE = "../api/storage/profile/";
-const navMenu = document.querySelector(".nav-menu");
-
-const slider = document.querySelector('.event-scroll');
-
-let isDown = false;
-let startX;
-let scrollLeft;
-
-if (slider) {
-  slider.addEventListener('mousedown', (e) => {
-    isDown = true;
-    startX = e.pageX - slider.offsetLeft;
-    scrollLeft = slider.scrollLeft;
-  });
-  slider.addEventListener('mouseleave', () => isDown = false);
-  slider.addEventListener('mouseup', () => isDown = false);
-  slider.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 2; // fast scroll
-    slider.scrollLeft = scrollLeft - walk;
-  });
+export function api(action) {
+    return `${API_BASE}?action=${action}`;
 }
 
-function initNavActive() {
-  if (!navMenu) return;
-  const links = Array.from(navMenu.querySelectorAll("a"));
-  if (!links.length) return;
+//cara lain
+// export const api = (action) => `${API_BASE}?action=${action}`;
 
-  const setActiveByHref = (href) => {
-    links.forEach((link) => {
-      link.classList.toggle("active", link.getAttribute("href") === href);
-    });
-  };
+// Semua endpoint API kamu
+// pakai export supy bisa dipakai ditmpt lain
+export const API = {
+    // AUTH
+    REGISTER: api("register"),
+    LOGIN: api("login"),
+    LOGOUT: api("logout"),
 
-  navMenu.addEventListener("click", (e) => {
-    const link = e.target.closest("a");
-    if (!link) return;
-    setActiveByHref(link.getAttribute("href"));
-  });
+    // USER
+    USER_SHOW: api("user_show"),
+    USER_UPDATE: api("user_update"),
+    USER_UPDATE_PASSWORD: api("user_update_password"),
+    USER_UPDATE_PHOTO: api("user_update_photo"),
+    USER_DELETE: api("user_delete"),
 
-  const handleHashChange = () => {
-    const hash = window.location.hash || links[0].getAttribute("href");
-    setActiveByHref(hash);
-  };
+    // EVENT
+    EVENTS: api("events"),
+    EVENT_SHOW: api("event_show"),
+    EVENT_CREATE: api("event_create"),
+    EVENT_UPDATE: api("event_update"),
+    EVENT_DELETE: api("event_delete"),
 
-  handleHashChange();
-  window.addEventListener("hashchange", handleHashChange);
-}
+    // TICKET
+    TICKETS: api("tickets"),
+    TICKET_SHOW: api("ticket_show"),
+    TICKET_CREATE: api("ticket_create"),
+    TICKET_UPDATE: api("ticket_update"),
+    TICKET_DELETE: api("ticket_delete"),
 
-document.addEventListener("DOMContentLoaded", initNavActive);
+    // TRANSACTION
+    TRANSACTIONS: api("transactions"),
+    TRANSACTION_SHOW: api("transaction_show"),
+    TRANSACTION_CREATE: api("transaction_create"),
+    TRANSACTION_UPDATE: api("transaction_update"),
+    TRANSACTION_DELETE: api("transaction_delete"),
 
-/* ============================
-   USER DROPDOWN
-============================ */
+    // LOCATION
+    LOCATIONS: api("locations"),
+    LOCATION_SHOW: api("location_show"),
+};
 
-function closeUserDropdown() {
-  if (userDropdown) userDropdown.classList.remove("open");
-}
-
-function initUserDropdown() {
-  if (!userToggle || !userDropdown) return;
-
-  userToggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    userDropdown.classList.toggle("open");
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!userDropdown.classList.contains("open")) return;
-    const inside = userDropdown.contains(e.target) || userToggle.contains(e.target);
-    if (!inside) closeUserDropdown();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeUserDropdown();
-  });
-}
-
-document.addEventListener("DOMContentLoaded", initUserDropdown);
-
-async function checkSession() {
-  try {
-    const res = await fetch("../api/index.php?action=user_show", {
-      credentials: "include",
-    });
-    if (!res.ok) throw new Error("not logged in");
-
-    const { data } = await res.json();
-    showLoggedIn(data || {});
-  } catch {
-    showLoggedOut();
-  }
-}
-
-function showLoggedIn(userData) {
-  if (loginBtn) loginBtn.style.display = "none";
-  if (registerBtn) registerBtn.style.display = "none";
-  if (logoutBtn) logoutBtn.style.display = "inline-flex";
-
-  if (userLabel) {
-    userLabel.style.display = "inline-flex";
-    const nameText = userData?.username || "User";
-    const emailText = "Customer";
-    const nameEl = userLabel.querySelector(".username");
-    const emailEl = userLabel.querySelector(".email");
-    if (nameEl) nameEl.textContent = nameText;
-    if (emailEl) emailEl.textContent = emailText;
-  }
-
-  if (userAvatar) {
-    const photo = userData?.user_profile
-      ? PROFILE_BASE + userData.user_profile + `?t=${Date.now()}`
-      : "./assets/userDefault.png";
-    userAvatar.src = photo;
-  }
-}
-
-function showLoggedOut() {
-  if (loginBtn) loginBtn.style.display = "inline-flex";
-  if (registerBtn) registerBtn.style.display = "inline-flex";
-  if (logoutBtn) logoutBtn.style.display = "none";
-
-  if (userLabel) {
-    userLabel.style.display = "none";
-    const nameEl = userLabel.querySelector(".username");
-    const emailEl = userLabel.querySelector(".email");
-    if (nameEl) nameEl.textContent = "";
-    if (emailEl) emailEl.textContent = "";
-  }
-
-  if (userAvatar) {
-    userAvatar.src = "./assets/userDefault.png";
-  }
-
-  closeUserDropdown();
-}
-
-async function handleLogout() {
-  try {
-    await fetch("../api/index.php?action=logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    } catch { }
-  showLoggedOut();
-}
-
-
-/* ============================
-EVENT LIST
-============================ */
-
-const API_EVENTS = "../api/index.php?action=events";
-const API_LOCATIONS = "../api/index.php?action=locations";
-
-const eventContainer = document.getElementById("eventContainer");
-const eventSearch = document.getElementById("eventSearch");
-if (eventContainer) {
-  eventContainer.classList.add("event-scroll");
-}
-
-let locationMap = {};
-let allEvents = [];
-
-async function loadLocations() {
-  try {
-    const res = await fetch(API_LOCATIONS);
-    const data = await res.json();
-    if (!res.ok || data.status !== "success") return;
-    (data.data || []).forEach((loc) => {
-      locationMap[loc.location_id] = loc;
-    });
-  } catch {}
-}
-
-async function loadEvents() {
-  try {
-    if (!Object.keys(locationMap).length) {
-      await loadLocations();
-    }
-    const res = await fetch(API_EVENTS);
-    const data = await res.json();
-
-    if (!res.ok || data.status !== "success") {
-      eventContainer.innerHTML = `<p style="color:var(--muted);">Gagal memuat event.</p>`;
-      return;
-    }
-
-    allEvents = data.data || [];
-
-    if (!allEvents.length) {
-      eventContainer.innerHTML = `<p style="color:var(--muted);">Belum ada event tersedia.</p>`;
-      return;
-    }
-
-    renderEvents(allEvents);
-  } catch (err) {
-    eventContainer.innerHTML = `<p style="color:var(--muted);">Error: ${err.message}</p>`;
-  }
-}
-
-function renderEvents(events) {
-  if (!eventContainer) return;
-  eventContainer.innerHTML = events.map((ev) => createEventCard(ev)).join("");
-}
-
-function filterEvents(query) {
-  const q = query.trim().toLowerCase();
-  if (!q) {
-    renderEvents(allEvents);
-    return;
-  }
-  const filtered = allEvents.filter((ev) =>
-    (ev.event_name || "").toLowerCase().includes(q)
-  );
-  renderEvents(filtered);
-}
-
-function createEventCard(ev) {
-  const imgUrl =
-    ev.image_url ||
-    "https://images.unsplash.com/photo-1511379938547-c1f69419868d";
-  const dateObj = new Date(ev.event_date);
-  const quota = ev.quota ?? 0;
-  const sold = ev.tickets_sold ?? 0;
-  const pct = quota ? Math.min(100, Math.round((sold / quota) * 100)) : 0;
-
-  const dateFormatted = dateObj.toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
-  const loc = locationMap[ev.location_id] || {};
-
-  return `
-    <div class="event-card">
-      <div class="event-content">
-        <div class="event-header">
-          <div>
-            <div class="event-title">${ev.event_name}</div>
-            <div class="event-artist">${ev.artist_name || "Various Artists"}</div>
-          </div>
-          <span class="event-badge">upcoming</span>
-        </div>
-
-        <div class="event-meta">
-          <div class="meta-row">
-            <img src="./assets/calendar_v2.png" alt="Tanggal" class="meta-icon" />
-            <span>${dateFormatted}</span>
-          </div>
-          <div class="meta-row">
-            <img src="./assets/location.png" alt="Lokasi" class="meta-icon" />
-            <span>${loc.address || "-"}${loc.city ? ", " + loc.city : ""}</span>
-          </div>
-        </div>
-
-        <div class="ticket-info">
-          <div class="ticket-label-row">
-            <span class="ticket-label">Tiket Terjual</span>
-            <span class="ticket-count">${sold} / ${quota}</span>
-          </div>
-          <div class="ticket-bar">
-            <div class="ticket-fill" style="width:${pct}%;"></div>
-          </div>
-        </div>
-
-        <div class="event-actions">
-          <a class="btn-outline" data-event-id="${ev.event_id}" href="./ticket.html?id=${ev.event_id}">Lihat Detail</a>
-          <a class="btn-primary" data-event-id="${ev.event_id}" href="./ticket.html?id=${ev.event_id}">Pesan</a>
-        </div>
-      </div>
-    </div>
-  `;
-}
-function buyTicket(eventId) {
-  window.location.href = `./ticket.html?id=${eventId}`;
-}
-
-// handle click delegation to keep redirect consistent
-if (eventContainer) {
-  eventContainer.addEventListener("click", (e) => {
-    const target = e.target.closest("[data-event-id]");
-    if (!target) return;
-    const id = target.getAttribute("data-event-id");
-    if (!id) return;
-    e.preventDefault();
-    buyTicket(id);
-  });
-}
-
-// jalankan
-if (eventContainer) {
-  loadEvents();
-}
-
-if (eventSearch) {
-  eventSearch.addEventListener("input", (e) => filterEvents(e.target.value));
-}
-
-// Landing page: keep login/register visible; skip session-based toggle.
+// Storage api path
+export const STORAGE = {
+    PROFILE: "/konser/api/storage/profile/",
+};

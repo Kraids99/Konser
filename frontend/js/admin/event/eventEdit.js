@@ -1,6 +1,4 @@
-const API_SHOW = "../../../api/index.php?action=event_show";
-const API_UPDATE = "../../../api/index.php?action=event_update";
-const API_LOCATIONS = "../../../api/index.php?action=locations";
+import { API } from "../../index.js";
 
 const form = document.getElementById("eventForm");
 const statusEl = document.getElementById("formStatus");
@@ -29,7 +27,7 @@ async function init(id) {
 
 async function loadLocations() {
   try {
-    const res = await fetch(API_LOCATIONS, { credentials: "include" });
+    const res = await fetch(API.LOCATIONS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") {
       statusEl.textContent = "Gagal memuat lokasi.";
@@ -53,7 +51,7 @@ async function loadLocations() {
 
 async function loadEvent(id) {
   try {
-    const res = await fetch(`${API_SHOW}&id=${encodeURIComponent(id)}`, {
+    const res = await fetch(`${API.EVENT_SHOW}&id=${encodeURIComponent(id)}`, {
       credentials: "include",
     });
     const data = await res.json();
@@ -102,7 +100,7 @@ async function handleSubmit(e) {
   const formData = new FormData(form);
 
   try {
-    const res = await fetch(API_UPDATE, {
+    const res = await fetch(API.EVENT_UPDATE, {
       method: "POST",
       body: formData,
       credentials: "include",

@@ -1,6 +1,9 @@
+import { API, STORAGE } from "./index.js";
+
+const DEFAULT_PROFILE_PHOTO = "./assets/userDefault.png";
+
 let namaInput;
 let emailInput;
-let telpInput; // opsional, ada jika field telp disediakan
 
 let editBtn;
 let saveBtn;
@@ -22,20 +25,111 @@ let photoInput;
 let changePhotoLink;
 let removePhotoLink;
 let savePhotoBtn;
-let photoEl;
+let nowPhoto;
 
-const API_USER = "../api/index.php?action=user_show";
-const API_UPDATE_PROFILE = "../api/index.php?action=user_update";
-const API_UPDATE_PASSWORD = "../api/index.php?action=user_update_password";
-const API_LOGOUT = "../api/index.php?action=logout";
-const API_DELETE = "../api/index.php?action=user_delete";
-const API_UPDATE_PHOTO = "../api/index.php?action=user_update_photo";
-const PROFILE_BASE = "../api/storage/profile/";
-
-let selectedPhotoFile = null;
+let selectedPhoto = null;
 let currentPhotoUrl = null;
 
+let oriValues = {
+    nama: "",
+    email: "",
+};
+
+window.goBack = goBack;
+
+// FUNCTIONS
+
+// tombol kembali nnti panggil goBack() di html
+function goBack() {
+    // window history adalah jumlah halaman yang tersimpan di history browser
+    if (window.history.length > 1)
+        window.history.back();
+    else
+        window.location.href = "index.html";
+
+}
+
+// cek foto yang dipilih
+function cekPhoto(file) {
+    if (!file) return;
+
+    // cek tipe harus gambar
+    if (!file.type.startsWith("image/")) {
+        setMsg(photoMsg, "Format harus gambar (jpg/png).", true);
+        return;
+    }
+
+    // cek ukuran maksimal 2MB
+    if (file.size > 2 * 1024 * 1024) {
+        setMsg(photoMsg, "Ukuran maksimal 2MB.", true);
+        return;
+    }
+
+    selectedPhoto = file;
+
+    // Membuat link ke file yang dipilih 
+    const url = URL.createObjectURL(file);
+
+    // Mengganti foto profil di halaman menjadi foto yg dipilih
+    // .src bawaan image
+    if (nowPhoto) nowPhoto.src = url;
+
+    // tombol cancel dan simpan muncul
+    // awalnay display none jadi di sini diubah
+    if (removePhotoLink) removePhotoLink.style.display = "inline-block";
+    if (savePhotoBtn) savePhotoBtn.style.display = "inline-block";
+    setMsg(photoMsg, "Klik Simpan Foto untuk mengunggah.");
+}
+
+// tombol batal foto
+function cancelPhoto() {
+    selectedPhoto = null;
+    if (photoInput) photoInput.value = "";
+
+    // ilangin tombol cancel dan simpan
+    if (removePhotoLink) removePhotoLink.style.display = "none";
+    if (savePhotoBtn) savePhotoBtn.style.display = "none";
+
+    // balikin foto ke yang sekarang
+    if (nowPhoto && currentPhotoUrl) nowPhoto.src = currentPhotoUrl;
+
+    setMsg(photoMsg, "");
+}
+
+// pesan status
+function setMsg(el, text, isError = false) {
+    if (!el) return;
+    el.textContent = text;
+    // warnanya merah kalo error, biru kalo bukan
+    el.style.color = isError ? "#d63b3b" : "#2563eb";
+}
+
+// toggle mode edit profile
+function toggleEdit(isEditing) {
+    if (!namaInput || !emailInput) return;
+
+    // toggleAttribute(name, force)
+    namaInput.toggleAttribute("readonly", !isEditing);
+    emailInput.toggleAttribute("readonly", !isEditing);
+
+    // ilangin tombol edit, munculin simpan batal
+    editBtn.style.display = isEditing ? "none" : "block";
+    saveBtn.style.display = isEditing ? "block" : "none";
+    cancelBtn.style.display = isEditing ? "block" : "none";
+}
+
+// batal edit profile
+function cancelEdit() {
+    namaInput.value = oriValues.nama;
+    emailInput.value = oriValues.email;
+
+    toggleEdit(false);
+    setMsg(profileMsg, "");
+}
+
+// bersihin input password
 function clearPasswordInputs() {
+    // fitur browser yang otomatis mengisi input field
     if (oldPassInput) {
         oldPassInput.value = "";
         oldPassInput.setAttribute("autocomplete", "new-password");
@@ -50,83 +144,100 @@ function clearPasswordInputs() {
     }
 }
 
-// helper untuk menaruh pesan status
-function setMsg(el, text, isError = false) {
-    if (!el) return;
-    el.textContent = text;
-    el.style.color = isError ? "#d63b3b" : "#2563eb";
-}
+// ASYNC FUNCTIONS
 
-// tombol kembali (inline onclick di HTML butuh global)
-function goBack() {
-    if (window.history.length > 1) {
-        window.history.back();
-    } else {
-        window.location.href = "index.html";
-    }
-}
-window.goBack = goBack;
-
-let originalValues = {
-    nama: "",
-    email: "",
-    telp: ""
-};
-
-async function loadProfile() {
+// tampilin data profile
+async function showProfile() {
     if (!namaInput || !emailInput) return;
     try {
-        const res = await fetch(API_USER, { credentials: "include" });
+        const res = await fetch(API.USER_SHOW, { credentials: "include" });
+
+        // masuk ke halaman login kalau blm login
         if (!res.ok) {
             window.location.href = "login.html";
             return;
         }
 
+        // cek ada result ga
         const result = await res.json();
         if (result.status !== "success" || !result.data) {
             return;
         }
 
+        // ambil data result
         const data = result.data;
 
         namaInput.value = data.username || "";
         emailInput.value = data.email || "";
-        if (telpInput) telpInput.value = data.telp || "";
 
-        originalValues = {
+        // kalau misal cancel edit, balikin ke nilai awal
+        oriValues = {
             nama: data.username || "",
             email: data.email || "",
-            telp: data.telp || ""
         };
 
-        document.querySelector(".profile-name").textContent = data.username || "Pengguna";
-        if (photoEl && data.user_profile) {
-            currentPhotoUrl = PROFILE_BASE + data.user_profile;
-            photoEl.src = currentPhotoUrl;
+        // tampilkan nama di profile header
+        document.querySelector(".profile-name").textContent = data.username;
+
+        //  cek ada ga, g ada pakai default
+        if (nowPhoto) {
+            if (data.user_profile) {
+                currentPhotoUrl = STORAGE.PROFILE + data.user_profile;
+            } else {
+                currentPhotoUrl = DEFAULT_PROFILE_PHOTO;
+            }
+            nowPhoto.src = currentPhotoUrl;
         }
-        clearPhotoSelection();
-        clearPasswordInputs(); // bersihkan autofill browser
+
+        cancelPhoto();
+        clearPasswordInputs();
+
     } catch (err) {
-        console.error("Gagal load profile:", err);
+        console.error("Gagal ngeload profile:", err);
     }
 }
 
-function toggleEdit(isEditing) {
-    if (!namaInput || !emailInput) return;
-    const readonly = !isEditing;
-    namaInput.toggleAttribute("readonly", readonly);
-    emailInput.toggleAttribute("readonly", readonly);
-    if (telpInput) telpInput.toggleAttribute("readonly", readonly);
+// fungsi simpan foto
+async function savePhoto() {
+    if (!selectedPhoto) {
+        setMsg(photoMsg, "Belum ada foto dipilih.", true);
+        return;
+    }
 
-    editBtn.style.display = isEditing ? "none" : "block";
-    saveBtn.style.display = isEditing ? "block" : "none";
-    cancelBtn.style.display = isEditing ? "block" : "none";
+    setMsg(photoMsg, "Mengunggah...");
+    const form = new FormData();
+    form.append("profile", selectedPhoto);
+
+    try {
+        const res = await fetch(API.USER_UPDATE_PHOTO, {
+            method: "POST",
+            body: form,
+            credentials: "include"
+        });
+        const result = await res.json();
+
+        if (!res.ok || result.status !== "success") {
+            setMsg(photoMsg, result.message || "Gagal mengunggah foto.", true);
+            return;
+        }
+
+        if (nowPhoto && result.file) {
+            currentPhotoUrl = STORAGE.PROFILE + result.file + "?t=" + Date.now();
+            nowPhoto.src = currentPhotoUrl;
+        }
+
+        setMsg(photoMsg, "Foto berhasil disimpan.");
+        cancelPhoto();
+    } catch (err) {
+        setMsg(photoMsg, "Error: " + err.message, true);
+    }
 }
 
+
+// fungsi simpan profile
 async function saveProfile() {
     const nama = namaInput.value.trim();
     const email = emailInput.value.trim();
-    const telp = telpInput ? telpInput.value.trim() : "";
 
     if (!nama || !email) {
         setMsg(profileMsg, "Nama dan email wajib diisi.", true);
@@ -138,12 +249,9 @@ async function saveProfile() {
     const form = new FormData();
     form.append("username", nama);
     form.append("email", email);
-    if (telpInput) {
-        form.append("telp", telp);
-    }
 
     try {
-        const res = await fetch(API_UPDATE_PROFILE, {
+        const res = await fetch(API.USER_UPDATE, {
             method: "POST",
             body: form,
             credentials: "include"
@@ -155,7 +263,10 @@ async function saveProfile() {
             return;
         }
 
-        originalValues = { nama, email, telp };
+        oriValues = {
+            nama,
+            email,
+        };
         toggleEdit(false);
         setMsg(profileMsg, "Profil berhasil diperbarui.");
         document.querySelector(".profile-name").textContent = nama;
@@ -164,15 +275,8 @@ async function saveProfile() {
     }
 }
 
-function cancelEdit() {
-    namaInput.value = originalValues.nama;
-    emailInput.value = originalValues.email;
-    if (telpInput) telpInput.value = originalValues.telp || "";
 
-    toggleEdit(false);
-    setMsg(profileMsg, "");
-}
-
+// fungsi ganti password
 async function changePassword() {
     const oldPass = oldPassInput.value;
     const newPass = newPassInput.value;
@@ -197,10 +301,10 @@ async function changePassword() {
 
     const form = new FormData();
     form.append("new_password", newPass);
-    form.append("old_password", oldPass); // antisipasi jika backend butuh nanti
+    form.append("old_password", oldPass);
 
     try {
-        const res = await fetch(API_UPDATE_PASSWORD, {
+        const res = await fetch(API.USER_UPDATE_PASSWORD, {
             method: "POST",
             body: form,
             credentials: "include"
@@ -221,14 +325,16 @@ async function changePassword() {
     }
 }
 
+// fungsi logout
 async function handleLogout() {
     setMsg(dangerMsg, "Logout...");
     try {
-        await fetch(API_LOGOUT, { method: "POST", credentials: "include" });
-    } catch {}
+        await fetch(API.LOGOUT, { method: "POST", credentials: "include" });
+    } catch { }
     window.location.href = "login.html";
 }
 
+// fungsi hapus akun
 async function handleDelete() {
     const ok = confirm("Yakin ingin menghapus akun? Tindakan ini tidak dapat dibatalkan.");
     if (!ok) return;
@@ -236,7 +342,7 @@ async function handleDelete() {
     setMsg(dangerMsg, "Menghapus akun...");
 
     try {
-        const res = await fetch(API_DELETE, {
+        const res = await fetch(API.USER_DELETE, {
             method: "POST",
             credentials: "include"
         });
@@ -254,79 +360,11 @@ async function handleDelete() {
     }
 }
 
-function clearPhotoSelection() {
-    selectedPhotoFile = null;
-    if (photoInput) photoInput.value = "";
-    if (removePhotoLink) removePhotoLink.style.display = "none";
-    if (savePhotoBtn) savePhotoBtn.style.display = "none";
-    if (photoEl && currentPhotoUrl) {
-        photoEl.src = currentPhotoUrl;
-    }
-    setMsg(photoMsg, "");
-}
-
-function previewSelectedPhoto(file) {
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-        setMsg(photoMsg, "Format harus gambar (jpg/png).", true);
-        return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-        setMsg(photoMsg, "Ukuran maksimal 2MB.", true);
-        return;
-    }
-
-    selectedPhotoFile = file;
-    const url = URL.createObjectURL(file);
-    if (photoEl) {
-        photoEl.src = url;
-    }
-    if (removePhotoLink) removePhotoLink.style.display = "inline-block";
-    if (savePhotoBtn) savePhotoBtn.style.display = "inline-block";
-    setMsg(photoMsg, "Klik Simpan Foto untuk mengunggah.");
-}
-
-async function savePhoto() {
-    if (!selectedPhotoFile) {
-        setMsg(photoMsg, "Belum ada foto dipilih.", true);
-        return;
-    }
-
-    setMsg(photoMsg, "Mengunggah...");
-    const form = new FormData();
-    form.append("profile", selectedPhotoFile);
-
-    try {
-        const res = await fetch(API_UPDATE_PHOTO, {
-            method: "POST",
-            body: form,
-            credentials: "include"
-        });
-        const result = await res.json();
-
-        if (!res.ok || result.status !== "success") {
-            setMsg(photoMsg, result.message || "Gagal mengunggah foto.", true);
-            return;
-        }
-
-        if (photoEl && result.file) {
-            currentPhotoUrl = PROFILE_BASE + result.file + "?t=" + Date.now();
-            photoEl.src = currentPhotoUrl;
-        }
-        setMsg(photoMsg, "Foto berhasil disimpan.");
-        clearPhotoSelection();
-    } catch (err) {
-        setMsg(photoMsg, "Error: " + err.message, true);
-    }
-}
 
 // Jalankan saat halaman dimuat
-function initProfilePage() {
+function profilePage() {
     namaInput = document.getElementById("nama");
     emailInput = document.getElementById("email");
-    telpInput = document.getElementById("telp");
 
     editBtn = document.getElementById("editBtn");
     saveBtn = document.getElementById("saveBtn");
@@ -348,14 +386,14 @@ function initProfilePage() {
     changePhotoLink = document.querySelector(".change-photo");
     removePhotoLink = document.querySelector(".remove-photo");
     savePhotoBtn = document.getElementById("savePhotoBtn");
-    photoEl = document.querySelector(".profile-photo");
+    nowPhoto = document.querySelector(".profile-photo");
 
     if (!editBtn || !saveBtn || !cancelBtn) {
         console.warn("Elemen profil tidak lengkap, inisialisasi dilewati.");
         return;
     }
 
-    loadProfile();
+    showProfile();
 
     editBtn.addEventListener("click", () => toggleEdit(true));
     saveBtn.addEventListener("click", saveProfile);
@@ -364,17 +402,18 @@ function initProfilePage() {
     logoutBtn?.addEventListener("click", handleLogout);
     deleteBtn?.addEventListener("click", handleDelete);
 
+    // tolong pelajari ini i blm loo
     if (changePhotoLink && photoInput) {
         changePhotoLink.addEventListener("click", (e) => {
             e.preventDefault();
             photoInput.click();
         });
-        photoInput.addEventListener("change", (e) => previewSelectedPhoto(e.target.files[0]));
+        photoInput.addEventListener("change", (e) => cekPhoto(e.target.files[0]));
     }
     if (removePhotoLink) {
         removePhotoLink.addEventListener("click", (e) => {
             e.preventDefault();
-            clearPhotoSelection();
+            cancelPhoto();
         });
     }
     if (savePhotoBtn) {
@@ -382,4 +421,5 @@ function initProfilePage() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", initProfilePage);
+document.addEventListener("DOMContentLoaded", profilePage);
+

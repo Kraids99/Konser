@@ -19,7 +19,7 @@ class UserController
         }
     }
 
-    // Ambil user_id dari sesi login; jika belum ada, boleh fallback dari request (misal admin)
+    // Ambil user_id dari sesi login
     private function requireSessionUser()
     {
         if (session_status() === PHP_SESSION_NONE) 
@@ -27,7 +27,7 @@ class UserController
             // $_SESSION dipakai untuk simpan data login di server
             session_start();
         }
-        // fallback: boleh kirim user_id manual (misal dari admin panel)
+        // boleh kirim user_id manual
         return $_SESSION['user_id'] ?? ($_POST['user_id'] ?? $_GET['user_id'] ?? null);
     }
 
@@ -58,7 +58,7 @@ class UserController
         echo json_encode(["status" => "success", "data" => $user]);
     }
 
-    // POST update username + email (cek email bentrok)
+    // POST update username + email (cek email)
     public function updateProfile()
     {
         header('Content-Type: application/json');

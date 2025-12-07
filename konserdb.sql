@@ -42,7 +42,8 @@ INSERT INTO `locations` (
     (2, 'Surabaya', 'Surabaya Grand Hall', -7.257500, 112.752100, NOW()),
     (3, 'Jakarta', 'GBK Senayan Jakarta', -6.218300, 106.802600, NOW()),
     (4, 'Jakarta', 'JIEXPO Kemayoran', -6.147500, 106.844700, NOW()),
-    (5, 'Bali', 'Bali Beach Arena', -8.409500, 115.188900, NOW());
+    (5, 'Bali', 'Bali Beach Arena', -8.409500, 115.188900, NOW()),
+    (6, 'Yogyakarta', 'Jogja Expo Center', -7.791400, 110.408600, NOW());
 
 -- Dummy data users
 INSERT INTO `users` (
@@ -54,11 +55,11 @@ INSERT INTO `users` (
     `user_profile`,
     `created_at`
 ) VALUES
-    (1, 'admin', 'admin', 'admin@gmail.com', SHA2('admin123', 256), 'admin.jpg', NOW()),
-    (2, 'user', 'alex', 'alex@gmail.com', SHA2('alex123', 256), 'alex.png', NOW()),
-    (3, 'user', 'vergie', 'vergie@gmail.com', SHA2('vergie123', 256), 'vergie.png', NOW()),
-    (4, 'user', 'fajar', 'fajar@gmail.com', SHA2('fajar123', 256), 'fajar.png', NOW()),
-    (5, 'user', 'rafael', 'rafael@gmail.com', SHA2('rafael123', 256), 'rafael.jpg', NOW());
+    (1, 'admin', 'admin', 'admin@gmail.com', SHA2('admin123', 256), NULL, NOW()),
+    (2, 'user', 'alex', 'alex@gmail.com', SHA2('alex123', 256), NULL, NOW()),
+    (3, 'user', 'vergie', 'vergie@gmail.com', SHA2('vergie123', 256), NULL, NOW()),
+    (4, 'user', 'fajar', 'fajar@gmail.com', SHA2('fajar123', 256), NULL, NOW()),
+    (5, 'user', 'rafael', 'rafael@gmail.com', SHA2('rafael123', 256), NULL, NOW());
 
 -- Tabel events
 CREATE TABLE `events` (
@@ -85,7 +86,8 @@ INSERT INTO `events` (
     (2, 'Dewa 19 Reunion', 2, '2026-05-10', 12000, NOW()),
     (3, 'We The Fest', 3, '2026-08-22', 35000, NOW()),
     (4, 'Java Jazz Festival', 4, '2026-03-05', 20000, NOW()),
-    (5, 'Alan Walker Concert', 5, '2026-11-30', 18000, NOW());
+    (5, 'Alan Walker Concert', 5, '2026-11-30', 18000, NOW()),
+    (6, 'Prambanan Jazz', 6, '2026-09-18', 15000, NOW());
 
 -- Tabel tickets
 CREATE TABLE `tickets` (
@@ -110,7 +112,8 @@ INSERT INTO `tickets` (
     (2, 1, 'Reguler', 1200000.00, NOW()),
     (3, 2, 'VIP', 750000.00, NOW()),
     (4, 3, 'Reguler', 500000.00, NOW()),
-    (5, 4, 'VIP', 1800000.00, NOW());
+    (5, 4, 'VIP', 1800000.00, NOW()),
+    (6, 6, 'Festival', 950000.00, NOW());
 
 -- Tabel transactions
 CREATE TABLE `transactions` (

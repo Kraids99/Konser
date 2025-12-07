@@ -14,6 +14,7 @@ const userToggle = document.querySelector(
 const displayName = document.querySelector('[data-auth="user"] .username');
 const PROFILE_BASE = "../api/storage/profile/";
 const navMenu = document.querySelector(".nav-menu");
+const DEFAULT_AVATAR = "./assets/userDefault.png";
 
 const slider = document.querySelector(".event-scroll");
 
@@ -144,7 +145,11 @@ function showLoggedIn(userData) {
   if (userAvatar) {
     const photo = userData?.user_profile
       ? PROFILE_BASE + userData.user_profile + `?t=${Date.now()}`
-      : "./assets/userDefault.png";
+      : DEFAULT_AVATAR;
+    userAvatar.onerror = () => {
+      userAvatar.onerror = null;
+      userAvatar.src = DEFAULT_AVATAR;
+    };
     userAvatar.src = photo;
   }
 }
@@ -163,7 +168,7 @@ function showLoggedOut() {
   }
 
   if (userAvatar) {
-    userAvatar.src = "./assets/userDefault.png";
+    userAvatar.src = DEFAULT_AVATAR;
   }
 
   closeUserDropdown();
@@ -299,9 +304,6 @@ function createEventCard(ev) {
         </div>
 
         <div class="event-actions">
-          <a class="btn-outline" data-event-id="${
-            ev.event_id
-          }" href="./ticket.html?id=${ev.event_id}">Lihat Detail</a>
           <a class="btn-primary" data-event-id="${
             ev.event_id
           }" href="./ticket.html?id=${ev.event_id}">Pesan</a>

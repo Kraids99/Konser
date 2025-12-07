@@ -1,6 +1,10 @@
+import { API } from "./index.js";
+
 const form = document.getElementById('registerForm');
 const msg = document.getElementById('msg');
-const endpoint = '../api/index.php?action=register';
+const usernameInput = document.getElementById('username');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
 
 async function register(e) {
     // biar ga reload"
@@ -16,12 +20,12 @@ async function register(e) {
     // const data = new FormData(form);
 
     const data = new FormData();
-    data.append('username', username.value);
-    data.append('email', email.value);
-    data.append('password', password.value);
+    data.append('username', usernameInput.value);
+    data.append('email', emailInput.value);
+    data.append('password', passwordInput.value);
 
     try {
-        // const res = await fetch(endpoint, {
+        // const res = await fetch(API.REGISTER, {
         //     method: 'POST',
         //     headers: {
         //         // headers itu isinya tipe data body yang dikirim; di sini x-www-form-urlencoded cocok dengan URLSearchParams
@@ -31,7 +35,7 @@ async function register(e) {
         //     body: data.toString(), 
         // });
 
-        const res = await fetch(endpoint, {
+        const res = await fetch(API.REGISTER, {
             method: 'POST',
             body: data // TIDAK perlu set Content-Type
         });

@@ -1,6 +1,4 @@
-const API_EVENTS = "../../../api/index.php?action=events";
-const API_DELETE = "../../../api/index.php?action=event_delete";
-const API_LOCATIONS = "../../../api/index.php?action=locations";
+import { API } from "../../index.js";
 
 const eventsListEl = document.getElementById("eventsList");
 const searchInput = document.getElementById("searchInput");
@@ -14,14 +12,14 @@ let locationMap = {};
 
 async function fetchLocations() {
   try {
-    const res = await fetch(API_LOCATIONS, { credentials: "include" });
+    const res = await fetch(API.LOCATIONS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") return;
     (data.data || []).forEach((loc) => {
       locationMap[loc.location_id] = loc;
     });
   } catch (err) {
-    
+    // ignore location load errors; cards will fallback
   }
 }
 
@@ -30,7 +28,7 @@ async function fetchEvents() {
     if (!Object.keys(locationMap).length) {
       await fetchLocations();
     }
-    const res = await fetch(API_EVENTS, { credentials: "include" });
+    const res = await fetch(API.EVENTS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") {
       eventsListEl.innerHTML = `<div class="empty">Gagal memuat event.</div>`;
@@ -91,7 +89,9 @@ function renderEvents(list) {
 
                     <div class="detail-item">
                         <span class="detail-icon"><img src="../../assets/location.png" alt="calender"/></span>
-                        <span>${escapeHtml(loc.address || "-")} (${escapeHtml(loc.city || "-")})</span>
+                        <span>${escapeHtml(loc.address || "-")} (${escapeHtml(
+        loc.city || "-"
+      )})</span>
                     </div>
                 </div>
                 
@@ -142,7 +142,7 @@ function escapeHtml(str) {
 }
 
 function applySearch() {
-  const term = (searchInput.value || "").toLowerCase();
+  const term = (searchInput?.value || "").toLowerCase();
   const filtered = rawEvents.filter((ev) => {
     const name = (ev.event_name || "").toLowerCase();
     const loc = locationMap[ev.location_id] || {};
@@ -161,7 +161,7 @@ async function deleteEvent(id) {
   const formData = new FormData();
   formData.append("event_id", id);
   try {
-    const res = await fetch(API_DELETE, {
+    const res = await fetch(API.EVENT_DELETE, {
       method: "POST",
       body: formData,
       credentials: "include",
@@ -183,6 +183,9 @@ addButtons.forEach((btn) => {
   });
 });
 
-searchInput.addEventListener("input", applySearch);
+searchInput?.addEventListener("input", applySearch);
+
+window.editEvent = editEvent;
+window.deleteEvent = deleteEvent;
 
 fetchEvents();

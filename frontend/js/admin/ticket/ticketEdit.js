@@ -1,6 +1,4 @@
-const API_SHOW = "../../../api/index.php?action=ticket_show";
-const API_UPDATE = "../../../api/index.php?action=ticket_update";
-const API_EVENTS = "../../../api/index.php?action=events";
+import { API } from "../../index.js";
 
 const form = document.getElementById("ticketForm");
 const statusEl = document.getElementById("formStatus");
@@ -21,7 +19,7 @@ if (!ticketId) {
 
 async function loadEvents() {
   try {
-    const res = await fetch(API_EVENTS, { credentials: "include" });
+    const res = await fetch(API.EVENTS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") {
       selectEvent.innerHTML = '<option value="">Gagal memuat event</option>';
@@ -61,7 +59,7 @@ async function loadTicket(id) {
   statusEl.textContent = "Memuat data ticket...";
   statusEl.className = "status loading";
   try {
-    const res = await fetch(`${API_SHOW}&id=${encodeURIComponent(id)}`, {
+    const res = await fetch(`${API.TICKET_SHOW}&id=${encodeURIComponent(id)}`, {
       credentials: "include",
     });
     const data = await res.json();
@@ -73,11 +71,11 @@ async function loadTicket(id) {
       enableForm();
     } else {
       statusEl.textContent =
-        "✗ Gagal memuat: " + (data.message || "Terjadi kesalahan.");
+        "Gagal memuat: " + (data.message || "Terjadi kesalahan.");
       statusEl.className = "status error";
     }
   } catch (err) {
-    statusEl.textContent = "✗ Error: " + err.message;
+    statusEl.textContent = "Error: " + err.message;
     statusEl.className = "status error";
   }
 }
@@ -103,25 +101,25 @@ async function handleSubmit(e) {
   const formData = new FormData(form);
 
   try {
-    const res = await fetch(API_UPDATE, {
+    const res = await fetch(API.TICKET_UPDATE, {
       method: "POST",
       body: formData,
       credentials: "include",
     });
     const data = await res.json();
     if (res.ok && data.status === "success") {
-      statusEl.textContent = "✓ Berhasil mengubah ticket. Mengalihkan...";
+      statusEl.textContent = "Berhasil mengubah ticket. Mengalihkan...";
       statusEl.className = "status success";
       setTimeout(() => {
         window.location.href = "./ticket.html";
       }, 700);
     } else {
       statusEl.textContent =
-        "✗ Gagal: " + (data.message || "Terjadi kesalahan.");
+        "Gagal: " + (data.message || "Terjadi kesalahan.");
       statusEl.className = "status error";
     }
   } catch (err) {
-    statusEl.textContent = "✗ Error: " + err.message;
+    statusEl.textContent = "Error: " + err.message;
     statusEl.className = "status error";
   }
 }

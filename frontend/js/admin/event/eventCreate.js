@@ -1,5 +1,4 @@
-const API_CREATE = "../../../api/index.php?action=event_create";
-const API_LOCATIONS = "../../../api/index.php?action=locations";
+import { API } from "../../index.js";
 const form = document.getElementById("eventForm");
 const statusEl = document.getElementById("formStatus");
 const backBtn = document.getElementById("backBtn");
@@ -7,7 +6,7 @@ const locationSelect = document.getElementById("location_id");
 
 async function loadLocations() {
   try {
-    const res = await fetch(API_LOCATIONS, { credentials: "include" });
+    const res = await fetch(API.LOCATIONS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") {
       statusEl.textContent = "Gagal memuat daftar lokasi.";
@@ -35,7 +34,7 @@ async function handleSubmit(e) {
   const formData = new FormData(form);
 
   try {
-    const res = await fetch(API_CREATE, {
+    const res = await fetch(API.EVENT_CREATE, {
       method: "POST",
       body: formData,
       credentials: "include",

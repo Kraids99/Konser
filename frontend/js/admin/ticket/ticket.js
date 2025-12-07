@@ -1,5 +1,4 @@
-const API_TICKETS = "../../../api/index.php?action=tickets";
-const API_DELETE = "../../../api/index.php?action=ticket_delete";
+import { API } from "../../index.js";
 
 const listEl = document.getElementById("ticketsList");
 const searchInput = document.getElementById("searchInput");
@@ -12,7 +11,7 @@ let rawTickets = [];
 
 async function fetchTickets() {
   try {
-    const res = await fetch(API_TICKETS, { credentials: "include" });
+    const res = await fetch(API.TICKETS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") {
       listEl.innerHTML = `<div class="empty">Gagal memuat ticket.</div>`;
@@ -118,7 +117,7 @@ async function deleteTicket(id) {
   const formData = new FormData();
   formData.append("ticket_id", id);
   try {
-    const res = await fetch(API_DELETE, {
+    const res = await fetch(API.TICKET_DELETE, {
       method: "POST",
       body: formData,
       credentials: "include",
@@ -141,5 +140,8 @@ addButtons.forEach((btn) => {
 });
 
 searchInput.addEventListener("input", applySearch);
+
+window.editTicket = editTicket;
+window.deleteTicket = deleteTicket;
 
 fetchTickets();

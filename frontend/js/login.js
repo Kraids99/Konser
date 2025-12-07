@@ -1,6 +1,7 @@
+import { API } from "./index.js";
+
 const form = document.getElementById("loginForm");
 const msg = document.getElementById("msg");
-const endpoint = "../api/index.php?action=login";
 
 const addButtonsUser = [
   document.getElementById("addButtonUser")
@@ -20,7 +21,7 @@ async function login(e) {
   msg.textContent = "Submitting...";
 
   try {
-    const res = await fetch(endpoint, {
+    const res = await fetch(API.LOGIN, {
       method: "POST",
       body: data, // jangan set Content-Type; browser yang isi boundary
       credentials: "include", // penting supaya cookie/sesi tersimpan

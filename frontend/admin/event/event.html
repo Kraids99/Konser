@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../css/navAdmin.css" />
     <link rel="stylesheet" href="../../css/event.css" />
     <title>Admin | Events</title>
   </head>
@@ -15,7 +16,9 @@
         </div>
 
         <a href="../../profile.html" class="user-chip">
-          <div class="avatar">A</div>
+          <div class="avatar">
+            <img class="avatar-img" src="../../assets/userDefault.png" alt="User Avatar" />
+          </div>
           <div class="user-meta">
             <span class="name">Admin</span>
             <span class="role">Administrator</span>
@@ -59,6 +62,7 @@
         <div id="eventsList" class="events-grid"></div>
       </main>
     </div>
-    <script src="../../js/event.js"></script>
+    <script type="module" src="../../js/admin/navAdmin.js"></script>
+    <script type="module" src="../../js/admin/event/event.js"></script>
   </body>
 </html>
