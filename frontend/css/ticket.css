@@ -43,6 +43,8 @@ aside.sidebar {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.06);
   margin-bottom: 18px;
+  text-decoration: none;
+  color: inherit;
 }
 
 .user-chip .avatar {

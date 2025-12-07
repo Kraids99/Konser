@@ -235,6 +235,9 @@ function createEventCard(ev) {
     ev.image_url ||
     "https://images.unsplash.com/photo-1511379938547-c1f69419868d";
   const dateObj = new Date(ev.event_date);
+  const quota = ev.quota ?? 0;
+  const sold = ev.tickets_sold ?? 0;
+  const pct = quota ? Math.min(100, Math.round((sold / quota) * 100)) : 0;
 
   const dateFormatted = dateObj.toLocaleDateString("id-ID", {
     day: "numeric",
@@ -242,38 +245,48 @@ function createEventCard(ev) {
     year: "numeric",
   });
 
-  const timeFormatted =
-    dateObj.toLocaleTimeString("id-ID", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }) + " WIB";
-
   const loc = locationMap[ev.location_id] || {};
 
   return `
-        <div class="event-card">
-            <img src="${imgUrl}" alt="${ev.event_name}">
-            <div class="event-content">
-                <div class="event-title">${ev.event_name}</div>
-                <div class="event-artist">${ev.artist_name || "Various Artists"}</div>
-
-                <div class="event-info">
-                    📅 ${dateFormatted} <br>
-                    🕒 ${timeFormatted} <br>
-                    📍 ${loc.address || "-"}, ${loc.city || "-"}
-                </div>
-
-                <div class="event-price">Mulai dari Rp ${(ev.price_min || 0).toLocaleString()}</div>
-
-                <a class="btn btn-primary" data-event-id="${ev.event_id}" href="./ticket.html?id=${ev.event_id}">
-                    Beli Tiket
-                </a>
-            </div>
+    <div class="event-card">
+      <div class="event-content">
+        <div class="event-header">
+          <div>
+            <div class="event-title">${ev.event_name}</div>
+            <div class="event-artist">${ev.artist_name || "Various Artists"}</div>
+          </div>
+          <span class="event-badge">upcoming</span>
         </div>
-    `;
-}
 
+        <div class="event-meta">
+          <div class="meta-row">
+            <img src="./assets/calendar_v2.png" alt="Tanggal" class="meta-icon" />
+            <span>${dateFormatted}</span>
+          </div>
+          <div class="meta-row">
+            <img src="./assets/location.png" alt="Lokasi" class="meta-icon" />
+            <span>${loc.address || "-"}${loc.city ? ", " + loc.city : ""}</span>
+          </div>
+        </div>
+
+        <div class="ticket-info">
+          <div class="ticket-label-row">
+            <span class="ticket-label">Tiket Terjual</span>
+            <span class="ticket-count">${sold} / ${quota}</span>
+          </div>
+          <div class="ticket-bar">
+            <div class="ticket-fill" style="width:${pct}%;"></div>
+          </div>
+        </div>
+
+        <div class="event-actions">
+          <a class="btn-outline" data-event-id="${ev.event_id}" href="./ticket.html?id=${ev.event_id}">Lihat Detail</a>
+          <a class="btn-primary" data-event-id="${ev.event_id}" href="./ticket.html?id=${ev.event_id}">Pesan</a>
+        </div>
+      </div>
+    </div>
+  `;
+}
 function buyTicket(eventId) {
   window.location.href = `./ticket.html?id=${eventId}`;
 }
