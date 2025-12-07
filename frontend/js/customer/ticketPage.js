@@ -1,19 +1,17 @@
-const API_BASE = "../api/index.php";
+import { API } from "../index.js";
+
+// baca event_id dari query
 const params = new URLSearchParams(window.location.search);
 const eventId = params.get("id") || params.get("event_id");
 
-const optionsContainer = document.getElementById("ticketOptions");
-const totalTicketsEl = document.getElementById("totalTickets");
-const totalPriceEl = document.getElementById("totalPrice");
-const payBtn = document.getElementById("payBtn");
-
-const titleEl = document.getElementById("eventTitle");
-const artistEl = document.getElementById("eventArtist");
-const dateEl = document.getElementById("eventDate");
-const timeEl = document.getElementById("eventTime");
-const locationEl = document.getElementById("eventLocation");
-const heroEl = document.getElementById("heroShot");
-const aboutEl = document.getElementById("eventAbout");
+let optionsContainer;
+let totalTicketsEl;
+let totalPriceEl;
+let payBtn;
+let titleEl;
+let artistEl;
+let dateEl;
+let locationEl;
 
 let ticketOptionsData = [];
 const cart = {};
@@ -21,29 +19,26 @@ let eventData = null;
 let locationData = null;
 let totalsState = { qty: 0, amount: 0 };
 
+// helper format rupiah
 function formatRupiah(num) {
   return "Rp " + Number(num || 0).toLocaleString("id-ID");
 }
 
-function formatDateTime(dateStr) {
-  if (!dateStr) return { dateText: "-", timeText: "-" };
+// ubah tanggal ke format lokal
+function formatDate(dateStr) {
+  if (!dateStr) return "-";
   const dt = new Date(dateStr);
-  if (isNaN(dt)) return { dateText: "-", timeText: "-" };
-  const dateText = dt.toLocaleDateString("id-ID", {
+  if (isNaN(dt)) return "-";
+  return dt.toLocaleDateString("id-ID", {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
-  const timeText =
-    dt.toLocaleTimeString("id-ID", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }) + " WIB";
-  return { dateText, timeText };
 }
 
 function renderOptions() {
+  if (!optionsContainer) return;
+
   if (!ticketOptionsData.length) {
     optionsContainer.innerHTML = `<div class="ticket-option" style="grid-template-columns:1fr;"><div class="ticket-info"><h4>Tiket belum tersedia</h4><div class="stock">Coba lagi nanti.</div></div></div>`;
     updateTotals();
@@ -73,6 +68,8 @@ function renderOptions() {
 }
 
 function attachStepperHandlers() {
+  if (!optionsContainer) return;
+
   const optionEls = optionsContainer.querySelectorAll(".ticket-option");
   optionEls.forEach((el) => {
     const id = el.dataset.id;
@@ -119,13 +116,13 @@ function updateTotals() {
   );
 
   totalsState = totals;
-  totalTicketsEl.textContent = totals.qty;
-  totalPriceEl.textContent = formatRupiah(totals.amount);
+  if (totalTicketsEl) totalTicketsEl.textContent = totals.qty;
+  if (totalPriceEl) totalPriceEl.textContent = formatRupiah(totals.amount);
 }
 
 async function loadEvent() {
   if (!eventId) return null;
-  const res = await fetch(`${API_BASE}?action=event_show&id=${eventId}`);
+  const res = await fetch(`${API.EVENT_SHOW}&id=${encodeURIComponent(eventId)}`);
   const data = await res.json();
   if (!res.ok || data.status !== "success") return null;
   return data.data;
@@ -133,14 +130,14 @@ async function loadEvent() {
 
 async function loadLocation(locId) {
   if (!locId) return null;
-  const res = await fetch(`${API_BASE}?action=location_show&id=${locId}`);
+  const res = await fetch(`${API.LOCATION_SHOW}&id=${encodeURIComponent(locId)}`);
   const data = await res.json();
   if (!res.ok || data.status !== "success") return null;
   return data.data;
 }
 
 async function loadTickets() {
-  const res = await fetch(`${API_BASE}?action=tickets`);
+  const res = await fetch(API.TICKETS);
   const data = await res.json();
   if (!res.ok || data.status !== "success") return [];
   const allTickets = data.data || [];
@@ -154,9 +151,8 @@ function applyEventToUI(ev, loc) {
   if (titleEl) titleEl.textContent = ev?.event_name || "Event";
   if (artistEl) artistEl.textContent = ev?.artist_name || "Various Artists";
 
-  const { dateText, timeText } = formatDateTime(ev?.event_date);
+  const dateText = formatDate(ev?.event_date);
   if (dateEl) dateEl.textContent = dateText;
-  if (timeEl) timeEl.textContent = timeText;
 
   if (locationEl) {
     const locText = loc
@@ -164,22 +160,12 @@ function applyEventToUI(ev, loc) {
       : "Lokasi belum diisi";
     locationEl.textContent = locText;
   }
-
-  if (aboutEl) {
-    aboutEl.textContent = ev?.description || ev?.event_name || "Tentang ConcertiTx";
-  }
-
-  if (heroEl) {
-    const img = ev?.image_url || ev?.banner_url || ev?.cover_url;
-    if (img) {
-      heroEl.style.backgroundImage = `url("${img}")`;
-    }
-  }
 }
 
 function mapTicketsToOptions(tickets) {
+  // ubah data API menjadi data untuk UI
   ticketOptionsData = tickets.map((t) => {
-    const maxStock = t.quota ?? null; // fallback if quota disediakan
+    const maxStock = t.quota ?? null;
     return {
       id: String(t.ticket_id ?? t.ticket_type ?? Math.random()),
       rawId: t.ticket_id ?? null,
@@ -203,12 +189,14 @@ async function initPage() {
     applyEventToUI(eventData || {}, locationData || {});
   } catch (err) {
     console.error("Gagal memuat data:", err);
-    optionsContainer.innerHTML =
-      '<div class="ticket-option" style="grid-template-columns:1fr;"><div class="ticket-info"><h4>Terjadi kesalahan</h4></div></div>';
+    if (optionsContainer) {
+      optionsContainer.innerHTML =
+        '<div class="ticket-option" style="grid-template-columns:1fr;"><div class="ticket-info"><h4>Terjadi kesalahan</h4></div></div>';
+    }
   }
 }
 
-payBtn.addEventListener("click", () => {
+function handleCheckout() {
   if (!totalsState.qty) {
     alert("Pilih jumlah tiket terlebih dahulu.");
     return;
@@ -227,6 +215,7 @@ payBtn.addEventListener("click", () => {
   const payload = {
     event_id: eventData?.event_id || eventId || null,
     event_name: eventData?.event_name || titleEl?.textContent || "",
+    event_date: eventData?.event_date || null,
     tickets: selections,
     totals: {
       qty: totalsState.qty,
@@ -237,6 +226,23 @@ payBtn.addEventListener("click", () => {
 
   sessionStorage.setItem("checkoutData", JSON.stringify(payload));
   window.location.href = "./transaction.html";
-});
+}
 
-initPage();
+function initTicketPage() {
+  optionsContainer = document.getElementById("ticketOptions");
+  totalTicketsEl = document.getElementById("totalTickets");
+  totalPriceEl = document.getElementById("totalPrice");
+  payBtn = document.getElementById("payBtn");
+  titleEl = document.getElementById("eventTitle");
+  artistEl = document.getElementById("eventArtist");
+  dateEl = document.getElementById("eventDate");
+  locationEl = document.getElementById("eventLocation");
+
+  if (payBtn) {
+    payBtn.addEventListener("click", handleCheckout);
+  }
+
+  initPage();
+}
+
+document.addEventListener("DOMContentLoaded", initTicketPage);

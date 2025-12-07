@@ -1,15 +1,22 @@
 import { API } from "../../index.js";
 
-const listEl = document.getElementById("ticketsList");
-const searchInput = document.getElementById("searchInput");
-const addButtons = [
-  document.getElementById("addTicketBtn"),
-  document.getElementById("addTicketBtn2"),
-].filter(Boolean);
-
+// daftar ticket untuk admin
+let listEl;
+let searchInput;
+let addButtons = [];
 let rawTickets = [];
 
+function cacheDom() {
+  listEl = document.getElementById("ticketsList");
+  searchInput = document.getElementById("searchInput");
+  addButtons = [
+    document.getElementById("addTicketBtn"),
+    document.getElementById("addTicketBtn2"),
+  ].filter(Boolean);
+}
+
 async function fetchTickets() {
+  if (!listEl) return;
   try {
     const res = await fetch(API.TICKETS, { credentials: "include" });
     const data = await res.json();
@@ -25,6 +32,8 @@ async function fetchTickets() {
 }
 
 function renderTickets(list) {
+  if (!listEl) return;
+
   if (!list.length) {
     listEl.innerHTML = `<div class="empty">Belum ada ticket. Tambahkan ticket pertama Anda.</div>`;
     return;
@@ -92,7 +101,7 @@ function escapeHtml(str) {
 }
 
 function applySearch() {
-  const term = (searchInput.value || "").toLowerCase();
+  const term = (searchInput?.value || "").toLowerCase();
   const filtered = rawTickets.filter((t) => {
     const type = (t.ticket_type || "").toLowerCase();
     const eventName = (t.event_name || "").toLowerCase();
@@ -133,15 +142,25 @@ async function deleteTicket(id) {
   }
 }
 
-addButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    window.location.href = "./ticketCreate.html";
+function bindButtons() {
+  addButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      window.location.href = "./ticketCreate.html";
+    });
   });
-});
 
-searchInput.addEventListener("input", applySearch);
+  if (searchInput) {
+    searchInput.addEventListener("input", applySearch);
+  }
+}
+
+function initTicketPage() {
+  cacheDom();
+  bindButtons();
+  fetchTickets();
+}
 
 window.editTicket = editTicket;
 window.deleteTicket = deleteTicket;
 
-fetchTickets();
+document.addEventListener("DOMContentLoaded", initTicketPage);

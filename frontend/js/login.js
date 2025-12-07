@@ -1,55 +1,72 @@
 import { API } from "./index.js";
 
-const form = document.getElementById("loginForm");
-const msg = document.getElementById("msg");
+// elemen form login
+let loginForm;
+let msgBox;
+let quickLinks = [];
 
-const addButtonsUser = [
-  document.getElementById("addButtonUser")
-].filter(Boolean);
+function setMsg(text) {
+  if (!msgBox) return;
+  msgBox.textContent = text;
+}
 
-async function login(e) {
-  e.preventDefault(); // supaya tidak reload halaman
+function redirectByRole(role) {
+  const normalized = (role || "").toLowerCase();
+  if (normalized === "admin") {
+    window.location.href = "./admin/event/event.html";
+    return;
+  }
+  window.location.href = "./customerDashboard.html";
+}
 
-  // FormData membentuk body multipart, tinggal append field sesuai name input
+async function handleLogin(e) {
+  // kirim kredensial ke API
+  e.preventDefault();
+  if (!loginForm) return;
+
   const data = new FormData();
-  data.append("email", form.email.value.trim());
-  data.append("password", form.password.value);
-  if (form.remember?.checked) {
-    data.append("remember", "1"); // 1 artinya aktifkan remember me
+  data.append("email", loginForm.email.value.trim());
+  data.append("password", loginForm.password.value);
+  if (loginForm.remember?.checked) {
+    data.append("remember", "1");
   }
 
-  msg.textContent = "Submitting...";
+  setMsg("Memproses...");
 
   try {
     const res = await fetch(API.LOGIN, {
       method: "POST",
-      body: data, // jangan set Content-Type; browser yang isi boundary
-      credentials: "include", // penting supaya cookie/sesi tersimpan
+      body: data,
+      credentials: "include",
     });
-
     const result = await res.json();
 
     if (res.ok && result.status === "success") {
-      msg.textContent = "Login berhasil!";
-      const role = (result.data?.role || "").toLowerCase();
-      // arahkan sesuai role
-      if (role === "admin") {
-        window.location.href = "./admin/event/event.html";
-      } else {
-        window.location.href = "./customerDashboard.html";
-      }
-    } else {
-      msg.textContent = "Login gagal: " + (result.message || "unknown error");
+      setMsg("Login berhasil!");
+      redirectByRole(result.data?.role);
+      return;
     }
+
+    setMsg("Login gagal: " + (result.message || "unknown error"));
   } catch (err) {
-    msg.textContent = "Request gagal: " + err.message;
+    setMsg("Request gagal: " + err.message);
   }
 }
 
-addButtonsUser.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    window.location.href = "./frontend/index.html";
-  });
-});
+function initLoginPage() {
+  // cache elemen dan binding event
+  loginForm = document.getElementById("loginForm");
+  msgBox = document.getElementById("msg");
+  quickLinks = [document.getElementById("addButtonUser")].filter(Boolean);
 
-form.addEventListener("submit", login);
+  quickLinks.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      window.location.href = "./frontend/index.html";
+    });
+  });
+
+  if (!loginForm) return;
+  loginForm.addEventListener("submit", handleLogin);
+}
+
+document.addEventListener("DOMContentLoaded", initLoginPage);

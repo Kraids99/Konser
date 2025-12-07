@@ -1,16 +1,24 @@
 import { API } from "../../index.js";
-const form = document.getElementById("eventForm");
-const statusEl = document.getElementById("formStatus");
-const backBtn = document.getElementById("backBtn");
-const locationSelect = document.getElementById("location_id");
+
+// form tambah event
+let form;
+let statusEl;
+let backBtn;
+let locationSelect;
+
+function setStatus(text, type = "") {
+  if (!statusEl) return;
+  statusEl.textContent = text;
+  statusEl.className = type ? `status ${type}` : "status";
+}
 
 async function loadLocations() {
+  if (!locationSelect) return;
   try {
     const res = await fetch(API.LOCATIONS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") {
-      statusEl.textContent = "Gagal memuat daftar lokasi.";
-      statusEl.className = "status error";
+      setStatus("Gagal memuat daftar lokasi.", "error");
       return;
     }
     const locations = data.data || [];
@@ -21,15 +29,14 @@ async function loadLocations() {
       locationSelect.appendChild(opt);
     });
   } catch (err) {
-    statusEl.textContent = "Error memuat lokasi: " + err.message;
-    statusEl.className = "status error";
+    setStatus("Error memuat lokasi: " + err.message, "error");
   }
 }
 
 async function handleSubmit(e) {
   e.preventDefault();
-  statusEl.textContent = "Menyimpan event...";
-  statusEl.className = "status";
+  if (!form) return;
+  setStatus("Menyimpan event...");
 
   const formData = new FormData(form);
 
@@ -41,19 +48,15 @@ async function handleSubmit(e) {
     });
     const data = await res.json();
     if (res.ok && data.status === "success") {
-      statusEl.textContent = "Berhasil menambah event. Mengalihkan...";
-      statusEl.className = "status success";
+      setStatus("Berhasil menambah event. Mengalihkan...", "success");
       setTimeout(() => {
         window.location.href = "./event.html";
       }, 700);
     } else {
-      statusEl.textContent =
-        "Gagal: " + (data.message || "Terjadi kesalahan.");
-      statusEl.className = "status error";
+      setStatus("Gagal: " + (data.message || "Terjadi kesalahan."), "error");
     }
   } catch (err) {
-    statusEl.textContent = "Error: " + err.message;
-    statusEl.className = "status error";
+    setStatus("Error: " + err.message, "error");
   }
 }
 
@@ -61,6 +64,16 @@ function goBack() {
   window.location.href = "./event.html";
 }
 
-loadLocations();
-form.addEventListener("submit", handleSubmit);
-backBtn.addEventListener("click", goBack);
+function initEventCreate() {
+  form = document.getElementById("eventForm");
+  statusEl = document.getElementById("formStatus");
+  backBtn = document.getElementById("backBtn");
+  locationSelect = document.getElementById("location_id");
+
+  loadLocations();
+
+  if (form) form.addEventListener("submit", handleSubmit);
+  if (backBtn) backBtn.addEventListener("click", goBack);
+}
+
+document.addEventListener("DOMContentLoaded", initEventCreate);

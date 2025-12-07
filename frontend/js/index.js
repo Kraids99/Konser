@@ -1,4 +1,4 @@
-// base urlnya yang ada di api (pakai path absolut biar aman di halaman nested)
+// base urlnya yang ada di api
 export const API_BASE = "/konser/api/index.php";
 
 export function api(action) {

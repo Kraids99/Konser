@@ -1,11 +1,19 @@
 import { API } from "../../index.js";
 
-const form = document.getElementById("ticketForm");
-const statusEl = document.getElementById("formStatus");
-const backBtn = document.getElementById("backBtn");
-const selectEvent = document.getElementById("event_id");
+// form tambah ticket
+let form;
+let statusEl;
+let backBtn;
+let selectEvent;
+
+function setStatus(text, type = "") {
+  if (!statusEl) return;
+  statusEl.textContent = text;
+  statusEl.className = type ? `status ${type}` : "status";
+}
 
 async function loadEvents() {
+  if (!selectEvent) return;
   try {
     const res = await fetch(API.EVENTS, { credentials: "include" });
     const data = await res.json();
@@ -38,15 +46,14 @@ async function loadEvents() {
         })
         .join("");
   } catch (err) {
-    console.error(err);
     selectEvent.innerHTML = '<option value="">Error memuat event</option>';
   }
 }
 
 async function handleSubmit(e) {
   e.preventDefault();
-  statusEl.textContent = "Menyimpan ticket...";
-  statusEl.className = "status";
+  if (!form) return;
+  setStatus("Menyimpan ticket...");
 
   const formData = new FormData(form);
 
@@ -58,19 +65,15 @@ async function handleSubmit(e) {
     });
     const data = await res.json();
     if (res.ok && data.status === "success") {
-      statusEl.textContent = "Berhasil menambah ticket. Mengalihkan...";
-      statusEl.className = "status success";
+      setStatus("Berhasil menambah ticket. Mengalihkan...", "success");
       setTimeout(() => {
         window.location.href = "./ticket.html";
       }, 700);
     } else {
-      statusEl.textContent =
-        "Gagal: " + (data.message || "Terjadi kesalahan.");
-      statusEl.className = "status error";
+      setStatus("Gagal: " + (data.message || "Terjadi kesalahan."), "error");
     }
   } catch (err) {
-    statusEl.textContent = "Error: " + err.message;
-    statusEl.className = "status error";
+    setStatus("Error: " + err.message, "error");
   }
 }
 
@@ -78,6 +81,16 @@ function goBack() {
   window.location.href = "./ticket.html";
 }
 
-form.addEventListener("submit", handleSubmit);
-backBtn.addEventListener("click", goBack);
-loadEvents();
+function initTicketCreate() {
+  form = document.getElementById("ticketForm");
+  statusEl = document.getElementById("formStatus");
+  backBtn = document.getElementById("backBtn");
+  selectEvent = document.getElementById("event_id");
+
+  loadEvents();
+
+  if (form) form.addEventListener("submit", handleSubmit);
+  if (backBtn) backBtn.addEventListener("click", goBack);
+}
+
+document.addEventListener("DOMContentLoaded", initTicketCreate);

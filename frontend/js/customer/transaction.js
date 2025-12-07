@@ -1,22 +1,23 @@
-const tabButtons = document.querySelectorAll("[data-pay-method]");
-const walletSection = document.getElementById("walletSection");
-const bankSection = document.getElementById("bankSection");
-const orderTitleEl = document.getElementById("orderEventTitle");
-const orderTypeEl = document.getElementById("orderTicketType");
-const orderQtyPriceEl = document.getElementById("orderQtyPrice");
-const orderPriceEl = document.getElementById("orderPrice");
-const subtotalEl = document.getElementById("subtotalPrice");
-const feeEl = document.getElementById("feePrice");
-const totalEl = document.getElementById("totalPrice");
-const payBtn = document.getElementById("payNowBtn");
-const buyerNameInput = document.getElementById("buyerName");
-const buyerEmailInput = document.getElementById("buyerEmail");
-const buyerPhoneInput = document.getElementById("buyerPhone");
-const API_BASE = "../api/index.php";
+import { API } from "../index.js";
+
+// simpan data checkout yang sudah dipilih sebelumnya
 let checkoutData = null;
 let userId = null;
 
+let tabButtons = [];
+let walletSection;
+let bankSection;
+let orderTitleEl;
+let orderTypeEl;
+let orderQtyPriceEl;
+let orderPriceEl;
+let subtotalEl;
+let feeEl;
+let totalEl;
+let payBtn;
+
 function setMethod(method) {
+  // ubah tab aktif dan tampilkan panel yang sesuai
   tabButtons.forEach((btn) => {
     const isActive = btn.dataset.payMethod === method;
     btn.classList.toggle("active", isActive);
@@ -26,21 +27,12 @@ function setMethod(method) {
   if (bankSection) bankSection.classList.toggle("hidden", method !== "bank");
 }
 
-tabButtons.forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
-    setMethod(btn.dataset.payMethod);
-  });
-});
-
-// default to ewallet
-setMethod("ewallet");
-
 function formatRupiah(num) {
   return "Rp " + Number(num || 0).toLocaleString("id-ID");
 }
 
 function loadCheckoutData() {
+  // tarik data checkout dari sessionStorage ke tampilan
   try {
     const raw = sessionStorage.getItem("checkoutData");
     if (!raw) return;
@@ -70,11 +62,10 @@ function loadCheckoutData() {
   }
 }
 
-loadCheckoutData();
-
 async function fetchUser() {
+  // ambil user_id untuk transaksi
   try {
-    const res = await fetch(`${API_BASE}?action=user_show`, {
+    const res = await fetch(API.USER_SHOW, {
       credentials: "include",
     });
     if (!res.ok) return;
@@ -82,18 +73,14 @@ async function fetchUser() {
     if (data.status === "success" && data.data?.user_id) {
       const u = data.data;
       userId = u.user_id;
-      if (buyerNameInput && u.username) buyerNameInput.value = u.username;
-      if (buyerEmailInput && u.email) buyerEmailInput.value = u.email;
-      if (buyerPhoneInput && u.telp) buyerPhoneInput.value = u.telp;
     }
   } catch (err) {
     console.error("Gagal mengambil user:", err);
   }
 }
 
-fetchUser();
-
 function getSelectedPayMethod() {
+  // fallback ke ewallet jika belum dipilih
   const active = document.querySelector(".tab-btn.active");
   return active?.dataset?.payMethod || "ewallet";
 }
@@ -108,7 +95,38 @@ function getSelectedBank() {
   return b ? b.nextElementSibling?.textContent?.trim() || "Bank" : "Bank";
 }
 
+async function fetchEventById(id) {
+  const res = await fetch(`${API.EVENT_SHOW}&id=${encodeURIComponent(id)}`);
+  const data = await res.json();
+  if (!res.ok || data.status !== "success") return null;
+  return data.data;
+}
+
+async function updateEventQuota() {
+  try {
+    if (!checkoutData?.event_id || !checkoutData?.totals?.qty) return;
+    const eventInfo = await fetchEventById(checkoutData.event_id);
+    if (!eventInfo) return;
+    const currentQuota = Number(eventInfo.quota || 0);
+    const newQuota = Math.max(0, currentQuota - Number(checkoutData.totals.qty || 0));
+    const form = new FormData();
+    form.append("event_id", eventInfo.event_id);
+    form.append("event_name", eventInfo.event_name || "");
+    form.append("location_id", eventInfo.location_id || "");
+    form.append("event_date", eventInfo.event_date || "");
+    form.append("quota", newQuota);
+    await fetch(API.EVENT_UPDATE, {
+      method: "POST",
+      body: form,
+      credentials: "include",
+    });
+  } catch (err) {
+    console.error("Gagal update quota event:", err);
+  }
+}
+
 async function submitTransaction() {
+  // validasi data checkout dan user sebelum bayar
   if (!checkoutData || !checkoutData.tickets?.length) {
     alert("Tidak ada data checkout. Silakan pilih tiket kembali.");
     window.location.href = "./ticket.html";
@@ -134,14 +152,13 @@ async function submitTransaction() {
   const form = new FormData();
   if (userId) form.append("user_id", userId);
   form.append("ticket_id", firstTicket.ticket_id);
-  form.append("ticket_token", "T" + Date.now());
-  form.append("quantity", checkoutData.totals?.qty || firstTicket.qty || 1);
-  form.append("total", checkoutData.totals?.amount || firstTicket.subtotal || 0);
-  form.append("metode_pembayaran", metodePembayaran);
-  form.append("action", "transaction_create");
+    form.append("ticket_token", "T" + Date.now());
+    form.append("quantity", checkoutData.totals?.qty || firstTicket.qty || 1);
+    form.append("total", checkoutData.totals?.amount || firstTicket.subtotal || 0);
+    form.append("metode_pembayaran", metodePembayaran);
 
   try {
-    const res = await fetch(`${API_BASE}`, {
+    const res = await fetch(API.TRANSACTION_CREATE, {
       method: "POST",
       body: form,
       credentials: "include",
@@ -150,7 +167,9 @@ async function submitTransaction() {
     if (res.ok && data.status === "success") {
       alert("Transaksi berhasil disimpan.");
       sessionStorage.removeItem("checkoutData");
-      window.location.href = "./index.html";
+      sessionStorage.setItem("paymentCompleted", "true");
+      await updateEventQuota();
+      window.location.href = "./customerDashboard.html";
     } else {
       alert(data.message || "Gagal menyimpan transaksi.");
     }
@@ -159,9 +178,52 @@ async function submitTransaction() {
   }
 }
 
-if (payBtn) {
-  payBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    submitTransaction();
+function lockBackNavigation() {
+  // cegah tombol back di tab ini setelah bayar
+  window.history.pushState(null, "", window.location.href);
+  window.addEventListener("popstate", () => {
+    window.history.pushState(null, "", window.location.href);
   });
 }
+
+function attachTabListeners() {
+  // klik tab untuk ganti metode pembayaran
+  tabButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      setMethod(btn.dataset.payMethod);
+    });
+  });
+}
+
+function initTransactionPage() {
+  tabButtons = Array.from(document.querySelectorAll("[data-pay-method]"));
+  walletSection = document.getElementById("walletSection");
+  bankSection = document.getElementById("bankSection");
+  orderTitleEl = document.getElementById("orderEventTitle");
+  orderTypeEl = document.getElementById("orderTicketType");
+  orderQtyPriceEl = document.getElementById("orderQtyPrice");
+  orderPriceEl = document.getElementById("orderPrice");
+  subtotalEl = document.getElementById("subtotalPrice");
+  feeEl = document.getElementById("feePrice");
+  totalEl = document.getElementById("totalPrice");
+  payBtn = document.getElementById("payNowBtn");
+
+  if (tabButtons.length) {
+    setMethod("ewallet");
+    attachTabListeners();
+  }
+
+  if (payBtn) {
+    payBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      submitTransaction();
+    });
+  }
+
+  loadCheckoutData();
+  fetchUser();
+  lockBackNavigation();
+}
+
+document.addEventListener("DOMContentLoaded", initTransactionPage);

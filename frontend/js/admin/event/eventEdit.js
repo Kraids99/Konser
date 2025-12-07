@@ -1,38 +1,30 @@
 import { API } from "../../index.js";
 
-const form = document.getElementById("eventForm");
-const statusEl = document.getElementById("formStatus");
-const backBtn = document.getElementById("backBtn");
-const submitBtn = document.getElementById("submitBtn");
-const locationSelect = document.getElementById("location_id");
+// form edit event
+let form;
+let statusEl;
+let backBtn;
+let submitBtn;
+let locationSelect;
+let eventIdInput;
 
 const params = new URLSearchParams(window.location.search);
 const eventId = params.get("id");
 
-if (!eventId) {
-  alert("ID event tidak ditemukan.");
-  window.location.href = "./event.html";
-} else {
-  document.getElementById("event_id").value = eventId;
-  init(eventId);
-}
-
-async function init(id) {
-  statusEl.textContent = "Memuat data...";
-  statusEl.className = "status loading";
-  const locations = await loadLocations();
-  if (!locations) return;
-  await loadEvent(id);
+function setStatus(text, type = "") {
+  if (!statusEl) return;
+  statusEl.textContent = text;
+  statusEl.className = type ? `status ${type}` : "status";
 }
 
 async function loadLocations() {
+  if (!locationSelect) return false;
   try {
     const res = await fetch(API.LOCATIONS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") {
-      statusEl.textContent = "Gagal memuat lokasi.";
-      statusEl.className = "status error";
-      return null;
+      setStatus("Gagal memuat lokasi.", "error");
+      return false;
     }
     const locations = data.data || [];
     locations.forEach((loc) => {
@@ -41,15 +33,14 @@ async function loadLocations() {
       opt.textContent = `${loc.city} - ${loc.address}`;
       locationSelect.appendChild(opt);
     });
-    return locations;
+    return true;
   } catch (err) {
-    statusEl.textContent = "Error memuat lokasi: " + err.message;
-    statusEl.className = "status error";
-    return null;
+    setStatus("Error memuat lokasi: " + err.message, "error");
+    return false;
   }
 }
 
-async function loadEvent(id) {
+async function loadEventData(id) {
   try {
     const res = await fetch(`${API.EVENT_SHOW}&id=${encodeURIComponent(id)}`, {
       credentials: "include",
@@ -57,21 +48,18 @@ async function loadEvent(id) {
     const data = await res.json();
     if (res.ok && data.status === "success") {
       fillForm(data.data);
-      statusEl.textContent = "";
-      statusEl.className = "status";
+      setStatus("");
       enableForm();
     } else {
-      statusEl.textContent =
-        "Gagal memuat: " + (data.message || "Terjadi kesalahan.");
-      statusEl.className = "status error";
+      setStatus("Gagal memuat: " + (data.message || "Terjadi kesalahan."), "error");
     }
   } catch (err) {
-    statusEl.textContent = "Error: " + err.message;
-    statusEl.className = "status error";
+    setStatus("Error: " + err.message, "error");
   }
 }
 
 function fillForm(ev) {
+  if (!form) return;
   form.event_name.value = ev.event_name || "";
   form.location_id.value = ev.location_id || "";
 
@@ -85,17 +73,18 @@ function fillForm(ev) {
 }
 
 function enableForm() {
+  if (!form) return;
   form.event_name.disabled = false;
   form.location_id.disabled = false;
   form.event_date.disabled = false;
   form.quota.disabled = false;
-  submitBtn.disabled = false;
+  if (submitBtn) submitBtn.disabled = false;
 }
 
 async function handleSubmit(e) {
   e.preventDefault();
-  statusEl.textContent = "Menyimpan perubahan...";
-  statusEl.className = "status loading";
+  if (!form) return;
+  setStatus("Menyimpan perubahan...", "loading");
 
   const formData = new FormData(form);
 
@@ -107,19 +96,15 @@ async function handleSubmit(e) {
     });
     const data = await res.json();
     if (res.ok && data.status === "success") {
-      statusEl.textContent = "Berhasil mengubah event. Mengalihkan...";
-      statusEl.className = "status success";
+      setStatus("Berhasil mengubah event. Mengalihkan...", "success");
       setTimeout(() => {
         window.location.href = "./event.html";
       }, 700);
     } else {
-      statusEl.textContent =
-        "Gagal: " + (data.message || "Terjadi kesalahan.");
-      statusEl.className = "status error";
+      setStatus("Gagal: " + (data.message || "Terjadi kesalahan."), "error");
     }
   } catch (err) {
-    statusEl.textContent = "Error: " + err.message;
-    statusEl.className = "status error";
+    setStatus("Error: " + err.message, "error");
   }
 }
 
@@ -127,5 +112,29 @@ function goBack() {
   window.location.href = "./event.html";
 }
 
-form.addEventListener("submit", handleSubmit);
-backBtn.addEventListener("click", goBack);
+async function initEventEdit() {
+  form = document.getElementById("eventForm");
+  statusEl = document.getElementById("formStatus");
+  backBtn = document.getElementById("backBtn");
+  submitBtn = document.getElementById("submitBtn");
+  locationSelect = document.getElementById("location_id");
+  eventIdInput = document.getElementById("event_id");
+
+  if (!eventId) {
+    alert("ID event tidak ditemukan.");
+    goBack();
+    return;
+  }
+  if (eventIdInput) eventIdInput.value = eventId;
+
+  setStatus("Memuat data...", "loading");
+  const ok = await loadLocations();
+  if (ok) {
+    await loadEventData(eventId);
+  }
+
+  if (form) form.addEventListener("submit", handleSubmit);
+  if (backBtn) backBtn.addEventListener("click", goBack);
+}
+
+document.addEventListener("DOMContentLoaded", initEventEdit);

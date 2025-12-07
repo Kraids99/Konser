@@ -1,12 +1,20 @@
 import { API, STORAGE } from "../index.js";
 
+// avatar default untuk navbar admin
 const DEFAULT_AVATAR = "../../assets/userDefault.png";
 
-function ensureAvatarImg() {
-  const avatarContainer = document.querySelector(".user-chip .avatar");
-  if (!avatarContainer) return null;
+let avatarImg;
+let userNameEl;
+let userRoleEl;
 
-  let avatarImg = avatarContainer.querySelector(".avatar-img");
+function cacheDom() {
+  const avatarContainer = document.querySelector(".user-chip .avatar");
+  userNameEl = document.querySelector(".user-chip .name");
+  userRoleEl = document.querySelector(".user-chip .role");
+
+  if (!avatarContainer) return;
+
+  avatarImg = avatarContainer.querySelector(".avatar-img");
   if (!avatarImg) {
     avatarImg = document.createElement("img");
     avatarImg.className = "avatar-img";
@@ -14,14 +22,10 @@ function ensureAvatarImg() {
     avatarContainer.textContent = "";
     avatarContainer.appendChild(avatarImg);
   }
-  return avatarImg;
 }
 
 async function loadUserChip() {
-  const avatarImg = ensureAvatarImg();
-  const userNameEl = document.querySelector(".user-chip .name");
-  const userRoleEl = document.querySelector(".user-chip .role");
-
+  // isi nama, role, dan foto di navbar
   try {
     const res = await fetch(API.USER_SHOW, { credentials: "include" });
     if (!res.ok) return;
@@ -36,12 +40,13 @@ async function loadUserChip() {
         : DEFAULT_AVATAR;
     }
   } catch {
-    // silent fail, keep default avatar/name
+    // biarkan avatar default jika gagal
   }
 }
 
 export function initAdminNav() {
+  cacheDom();
   loadUserChip();
 }
 
-initAdminNav();
+document.addEventListener("DOMContentLoaded", initAdminNav);

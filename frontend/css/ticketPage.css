@@ -76,42 +76,19 @@ body {
 
 .modal-body {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 28px;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
   padding: 18px 4px 12px;
 }
 
 .info-col {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.hero-placeholder {
-  width: 100%;
-  background: #f5f7fb;
-  border: 1px solid #e5e7eb;
+  gap: 12px;
+  padding: 14px;
+  border: 1px dashed #e5e7eb;
   border-radius: 12px;
-  padding: 12px;
-  display: flex;
-  justify-content: center;
-}
-
-.hero-shot {
-  width: 100%;
-  max-width: 620px;
-  height: 240px;
-  border-radius: 10px;
-  background: url("https://images.unsplash.com/photo-1459749411175-04bf5292ceea?fm=jpg&q=80&w=1600&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y29uY2VydHxlbnwwfHwwfHx8MA%3D%3D")
-    center/cover no-repeat;
-  border: 1px solid #dfe3ea;
-}
-
-.about {
-  text-align: center;
-  margin: 0;
-  color: #6b7280;
-  font-size: 13px;
+  background: #f9fafb;
 }
 
 .meta-list {

@@ -1,28 +1,54 @@
-/* ============================
-   NAVBAR / USER STATE
-============================ */
+import { API, STORAGE } from "../index.js";
 
-const loginBtn = document.querySelector('[data-auth="login"]');
-const registerBtn = document.querySelector('[data-auth="register"]');
-const logoutBtn = document.querySelector('[data-auth="logout"]');
-const userLabel = document.querySelector('[data-auth="user"]');
-const userAvatar = document.querySelector('[data-auth="user"] .avatar');
-const userDropdown = document.querySelector('[data-auth="user"] .nav-dropdown');
-const userToggle = document.querySelector(
-  '[data-auth="user"] .nav-user-toggle'
-);
-const displayName = document.querySelector('[data-auth="user"] .username');
-const PROFILE_BASE = "../api/storage/profile/";
-const navMenu = document.querySelector(".nav-menu");
+// konstanta dasar
 const DEFAULT_AVATAR = "./assets/userDefault.png";
 
-const slider = document.querySelector(".event-scroll");
+let loginBtn;
+let registerBtn;
+let logoutBtn;
+let userLabel;
+let userAvatar;
+let userDropdown;
+let userToggle;
+let displayName;
+let useLocationBtn;
+let navMenu;
+let slider;
+let eventContainer;
+let eventSearch;
 
 let isDown = false;
 let startX;
 let scrollLeft;
+let locationMap = {};
+let allEvents = [];
+let lastSortedByLocation = false;
 
-if (slider) {
+function cacheDom() {
+  // ambil semua elemen yang sering dipakai
+  loginBtn = document.querySelector('[data-auth="login"]');
+  registerBtn = document.querySelector('[data-auth="register"]');
+  logoutBtn = document.querySelector('[data-auth="logout"]');
+  userLabel = document.querySelector('[data-auth="user"]');
+  userAvatar = document.querySelector('[data-auth="user"] .avatar');
+  userDropdown = document.querySelector('[data-auth="user"] .nav-dropdown');
+  userToggle = document.querySelector('[data-auth="user"] .nav-user-toggle');
+  displayName = document.querySelector('[data-auth="user"] .username');
+  useLocationBtn = document.getElementById("useLocationBtn");
+  navMenu = document.querySelector(".nav-menu");
+  slider = document.querySelector(".event-scroll");
+  eventContainer = document.getElementById("eventContainer");
+  eventSearch = document.getElementById("eventSearch");
+
+  if (eventContainer) {
+    eventContainer.classList.add("event-scroll");
+  }
+}
+
+function initSliderDrag() {
+  if (!slider) return;
+
+  // drag horizontally untuk daftar event
   slider.addEventListener("mousedown", (e) => {
     isDown = true;
     startX = e.pageX - slider.offsetLeft;
@@ -65,12 +91,6 @@ function initNavActive() {
   window.addEventListener("hashchange", handleHashChange);
 }
 
-document.addEventListener("DOMContentLoaded", initNavActive);
-
-/* ============================
-   USER DROPDOWN
-============================ */
-
 function closeUserDropdown() {
   if (userDropdown) userDropdown.classList.remove("open");
 }
@@ -78,6 +98,7 @@ function closeUserDropdown() {
 function initUserDropdown() {
   if (!userToggle || !userDropdown) return;
 
+  // toggle dropdown user di navbar
   userToggle.addEventListener("click", (e) => {
     e.stopPropagation();
     userDropdown.classList.toggle("open");
@@ -95,11 +116,10 @@ function initUserDropdown() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", initUserDropdown);
-
+// pastikan user login dan role customer; alihkan admin
 async function checkSession() {
   try {
-    const res = await fetch("../api/index.php?action=user_show", {
+    const res = await fetch(API.USER_SHOW, {
       credentials: "include",
     });
     if (!res.ok) throw new Error("not logged in");
@@ -144,7 +164,7 @@ function showLoggedIn(userData) {
 
   if (userAvatar) {
     const photo = userData?.user_profile
-      ? PROFILE_BASE + userData.user_profile + `?t=${Date.now()}`
+      ? STORAGE.PROFILE + userData.user_profile + `?t=${Date.now()}`
       : DEFAULT_AVATAR;
     userAvatar.onerror = () => {
       userAvatar.onerror = null;
@@ -176,7 +196,7 @@ function showLoggedOut() {
 
 async function handleLogout() {
   try {
-    await fetch("../api/index.php?action=logout", {
+    await fetch(API.LOGOUT, {
       method: "POST",
       credentials: "include",
     });
@@ -185,25 +205,10 @@ async function handleLogout() {
   window.location.href = "./login.html";
 }
 
-/* ============================
-EVENT LIST
-============================ */
-
-const API_EVENTS = "../api/index.php?action=events";
-const API_LOCATIONS = "../api/index.php?action=locations";
-
-const eventContainer = document.getElementById("eventContainer");
-const eventSearch = document.getElementById("eventSearch");
-if (eventContainer) {
-  eventContainer.classList.add("event-scroll");
-}
-
-let locationMap = {};
-let allEvents = [];
-
 async function loadLocations() {
+  // ambil daftar lokasi untuk mapping jarak
   try {
-    const res = await fetch(API_LOCATIONS);
+    const res = await fetch(API.LOCATIONS);
     const data = await res.json();
     if (!res.ok || data.status !== "success") return;
     (data.data || []).forEach((loc) => {
@@ -213,11 +218,12 @@ async function loadLocations() {
 }
 
 async function loadEvents() {
+  if (!eventContainer) return;
   try {
     if (!Object.keys(locationMap).length) {
       await loadLocations();
     }
-    const res = await fetch(API_EVENTS);
+    const res = await fetch(API.EVENTS);
     const data = await res.json();
 
     if (!res.ok || data.status !== "success") {
@@ -244,15 +250,82 @@ function renderEvents(events) {
 }
 
 function filterEvents(query) {
+  // pencarian sederhana berdasarkan nama
   const q = query.trim().toLowerCase();
   if (!q) {
-    renderEvents(allEvents);
+    renderEvents(lastSortedByLocation ? sortByLocation(allEvents) : allEvents);
     return;
   }
-  const filtered = allEvents.filter((ev) =>
+  const baseList = lastSortedByLocation ? sortByLocation(allEvents) : allEvents;
+  const filtered = baseList.filter((ev) =>
     (ev.event_name || "").toLowerCase().includes(q)
   );
   renderEvents(filtered);
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  // hitung jarak antar koordinat (km)
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function sortByLocation(list, coords) {
+  if (!coords) return list;
+  const sorted = [...list].map((ev) => {
+    const loc = locationMap[ev.location_id] || {};
+    const lat = Number(loc.latitude);
+    const lon = Number(loc.longitude);
+    const distance =
+      isNaN(lat) || isNaN(lon)
+        ? Number.POSITIVE_INFINITY
+        : haversine(coords.lat, coords.lon, lat, lon);
+    return { ev, distance };
+  });
+  sorted.sort((a, b) => a.distance - b.distance);
+  return sorted.map((item) => item.ev);
+}
+
+function handleUseLocation() {
+  if (!useLocationBtn) return;
+  if (!navigator.geolocation) {
+    alert("Browser tidak mendukung geolokasi.");
+    return;
+  }
+  useLocationBtn.disabled = true;
+  useLocationBtn.textContent = "Mengambil lokasi...";
+  const resetBtn = (label = "Gunakan Lokasi") => {
+    useLocationBtn.disabled = false;
+    useLocationBtn.textContent = label;
+  };
+  const timeout = setTimeout(() => resetBtn(), 8000);
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      clearTimeout(timeout);
+      const coords = {
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude,
+      };
+      lastSortedByLocation = true;
+      const sorted = sortByLocation(allEvents, coords);
+      renderEvents(sorted);
+      resetBtn("Lokasi aktif");
+    },
+    () => {
+      clearTimeout(timeout);
+      alert("Gagal membaca lokasi. Pastikan izin lokasi diaktifkan.");
+      resetBtn();
+    }
+  );
 }
 
 function createEventCard(ev) {
@@ -312,11 +385,13 @@ function createEventCard(ev) {
     </div>
   `;
 }
+
 function buyTicket(eventId) {
   window.location.href = `./ticket.html?id=${eventId}`;
 }
 
-if (eventContainer) {
+function initEventClicks() {
+  if (!eventContainer) return;
   eventContainer.addEventListener("click", (e) => {
     const target = e.target.closest("[data-event-id]");
     if (!target) return;
@@ -327,16 +402,27 @@ if (eventContainer) {
   });
 }
 
-if (eventContainer) {
+function initCustomerDashboard() {
+  cacheDom();
+  initSliderDrag();
+  initNavActive();
+  initUserDropdown();
+  initEventClicks();
+
+  if (eventSearch) {
+    eventSearch.addEventListener("input", (e) => filterEvents(e.target.value));
+  }
+
+  if (useLocationBtn) {
+    useLocationBtn.addEventListener("click", handleUseLocation);
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", handleLogout);
+  }
+
   loadEvents();
+  checkSession();
 }
 
-if (eventSearch) {
-  eventSearch.addEventListener("input", (e) => filterEvents(e.target.value));
-}
-
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", handleLogout);
-}
-
-checkSession();
+document.addEventListener("DOMContentLoaded", initCustomerDashboard);

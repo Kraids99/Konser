@@ -1,14 +1,20 @@
 import { API } from "../../index.js";
 
-const eventsListEl = document.getElementById("eventsList");
-const searchInput = document.getElementById("searchInput");
-const addButtons = [
-  document.getElementById("addEventBtn"),
-  document.getElementById("addEventBtn2"),
-].filter(Boolean);
-
+// daftar event untuk admin
+let eventsListEl;
+let searchInput;
+let addButtons = [];
 let rawEvents = [];
 let locationMap = {};
+
+function cacheDom() {
+  eventsListEl = document.getElementById("eventsList");
+  searchInput = document.getElementById("searchInput");
+  addButtons = [
+    document.getElementById("addEventBtn"),
+    document.getElementById("addEventBtn2"),
+  ].filter(Boolean);
+}
 
 async function fetchLocations() {
   try {
@@ -18,12 +24,13 @@ async function fetchLocations() {
     (data.data || []).forEach((loc) => {
       locationMap[loc.location_id] = loc;
     });
-  } catch (err) {
-    // ignore location load errors; cards will fallback
+  } catch {
+    // abaikan error lokasi, kartu tetap muncul
   }
 }
 
 async function fetchEvents() {
+  if (!eventsListEl) return;
   try {
     if (!Object.keys(locationMap).length) {
       await fetchLocations();
@@ -42,6 +49,8 @@ async function fetchEvents() {
 }
 
 function renderEvents(list) {
+  if (!eventsListEl) return;
+
   if (!list.length) {
     eventsListEl.innerHTML = `<div class="empty">Belum ada event. Tambahkan event pertama Anda.</div>`;
     return;
@@ -177,15 +186,25 @@ async function deleteEvent(id) {
   }
 }
 
-addButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    window.location.href = "./eventCreate.html";
+function bindButtons() {
+  addButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      window.location.href = "./eventCreate.html";
+    });
   });
-});
 
-searchInput?.addEventListener("input", applySearch);
+  if (searchInput) {
+    searchInput.addEventListener("input", applySearch);
+  }
+}
+
+function initEventPage() {
+  cacheDom();
+  bindButtons();
+  fetchEvents();
+}
 
 window.editEvent = editEvent;
 window.deleteEvent = deleteEvent;
 
-fetchEvents();
+document.addEventListener("DOMContentLoaded", initEventPage);
