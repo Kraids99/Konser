@@ -155,7 +155,7 @@ async function handleLogout() {
       method: "POST",
       credentials: "include",
     });
-    } catch { }
+  } catch { }
   showLoggedOut();
 }
 
@@ -184,7 +184,7 @@ async function loadLocations() {
     (data.data || []).forEach((loc) => {
       locationMap[loc.location_id] = loc;
     });
-  } catch {}
+  } catch { }
 }
 
 async function loadEvents() {
