@@ -1,5 +1,5 @@
 import { API } from "../../index.js";
-import { cekAdmin, isAdmin } from "../adminAuth.js";
+import { cekAdmin } from "../adminAuth.js";
 
 // form tambah event
 let form;
