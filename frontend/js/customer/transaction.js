@@ -17,8 +17,8 @@ let totalEl;
 let payBtn;
 let closeBtn;
 
+//buat aktifin wallet / bank & nampilin ui
 function setMethod(method) {
-  // ubah tab aktif dan tampilkan panel yang sesuai
   tabButtons.forEach((btn) => {
     const isActive = btn.dataset.payMethod === method;
     btn.classList.toggle("active", isActive);
@@ -63,7 +63,6 @@ function loadCheckoutData() {
 
 function handleClose() {
   try {
-    // baca lagi untuk ambil event_id
     if (!checkoutData) {
       const raw = sessionStorage.getItem("checkoutData");
       if (raw) checkoutData = JSON.parse(raw);
@@ -82,8 +81,8 @@ function handleClose() {
     : "./customerDashboard.html";
 }
 
+//fetch data user untuk transaksi
 async function fetchUser() {
-  // ambil user_id untuk transaksi
   try {
     const res = await fetch(API.USER_SHOW, {
       credentials: "include",
@@ -99,8 +98,8 @@ async function fetchUser() {
   }
 }
 
+
 function getSelectedPayMethod() {
-  // fallback ke ewallet jika belum dipilih
   const active = document.querySelector(".tab-btn.active");
   return active?.dataset?.payMethod || "ewallet";
 }
@@ -115,15 +114,7 @@ function getSelectedBank() {
   return b ? b.nextElementSibling?.textContent?.trim() || "Bank" : "Bank";
 }
 
-async function fetchEventById(id) {
-  const res = await fetch(`${API.EVENT_SHOW}&id=${encodeURIComponent(id)}`);
-  const data = await res.json();
-  if (!res.ok || data.status !== "success") return null;
-  return data.data;
-}
-
 async function submitTransaction() {
-  // validasi data checkout dan user sebelum bayar
   if (!checkoutData || !checkoutData.tickets?.length) {
     alert("Tidak ada data checkout. Silakan pilih tiket kembali.");
     window.location.href = "./ticket.html";
@@ -174,8 +165,8 @@ async function submitTransaction() {
   }
 }
 
+//buat pindah pindah wallet <-> bank
 function attachTabListeners() {
-  // klik tab untuk ganti metode pembayaran
   tabButtons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();

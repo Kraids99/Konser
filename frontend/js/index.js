@@ -1,7 +1,6 @@
-// Hitung base path dinamis supaya tetap benar meski folder proyek punya spasi/kasus huruf beda.
-// Contoh: http://localhost/PWD%20Tubes/Konser/frontend/login.html -> /PWD%20Tubes/Konser
+// Hitung base path dinamis supaya benar meski folder punya spasi/kasus beda.
+// Misal: http://localhost/PWD%20Tubes/Konser/frontend/register.html -> /PWD%20Tubes/Konser
 const APP_BASE = window.location.pathname.split("/frontend/")[0] || "";
-
 export const API_BASE = `${APP_BASE}/api/index.php`;
 
 export function api(action) {
