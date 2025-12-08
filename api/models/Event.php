@@ -38,7 +38,7 @@ class Event {
     public function getAll()
     {
         // ambil event + total tiket terjual (jumlah quantity dari transaksi)
-        $query = "SELECT *, SUM(tn.quantity) AS tickets_sold
+        $query = "SELECT e.*, SUM(tn.quantity) AS tickets_sold
                 FROM events e
                 LEFT JOIN tickets tk ON tk.event_id = e.event_id
                 LEFT JOIN transactions tn ON tn.ticket_id = tk.ticket_id
