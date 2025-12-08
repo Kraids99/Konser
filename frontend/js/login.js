@@ -5,12 +5,14 @@ let loginForm;
 let msgBox;
 let quickLinks = [];
 
+//menampilkan pesan ke user
 function setMsg(text, color = "black") {
   if (!msgBox) return;
   msgBox.textContent = text;
   msgBox.style.color = color;
 }
 
+//redirect berdasarkan role
 function redirectByRole(role) {
   const normalized = (role || "").toLowerCase();
   if (normalized === "admin") {
@@ -22,7 +24,7 @@ function redirectByRole(role) {
 
 async function handleLogin(e) {
   // kirim kredensial ke API
-  e.preventDefault();
+  e.preventDefault();//mencegah reload
   if (!loginForm) return;
 
   const data = new FormData();
