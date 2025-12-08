@@ -1,6 +1,5 @@
 import { API, STORAGE } from "../index.js";
 
-// konstanta dasar
 const DEFAULT_AVATAR = "./assets/userDefault.png";
 
 let userLabel;
@@ -22,8 +21,8 @@ let allEvents = [];
 let lastSortedByLocation = false;
 let locationActive = false;
 
+//ambil element
 function cacheDom() {
-  // ambil semua elemen yang sering dipakai
   userLabel = document.querySelector('[data-auth="user"]');
   userAvatar = document.querySelector('[data-auth="user"] .avatar');
   userDropdown = document.querySelector('[data-auth="user"] .nav-dropdown');
@@ -40,25 +39,25 @@ function cacheDom() {
   }
 }
 
-function initSliderDrag() {
-  if (!slider) return;
+//gk kepake?
+// function initSliderDrag() {
+//   if (!slider) return;
 
-  // drag horizontally untuk daftar event
-  slider.addEventListener("mousedown", (e) => {
-    isDown = true;
-    startX = e.pageX - slider.offsetLeft;
-    scrollLeft = slider.scrollLeft;
-  });
-  slider.addEventListener("mouseleave", () => (isDown = false));
-  slider.addEventListener("mouseup", () => (isDown = false));
-  slider.addEventListener("mousemove", (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 2;
-    slider.scrollLeft = scrollLeft - walk;
-  });
-}
+//   slider.addEventListener("mousedown", (e) => {
+//     isDown = true;
+//     startX = e.pageX - slider.offsetLeft;
+//     scrollLeft = slider.scrollLeft;
+//   });
+//   slider.addEventListener("mouseleave", () => (isDown = false));
+//   slider.addEventListener("mouseup", () => (isDown = false));
+//   slider.addEventListener("mousemove", (e) => {
+//     if (!isDown) return;
+//     e.preventDefault();
+//     const x = e.pageX - slider.offsetLeft;
+//     const walk = (x - startX) * 2;
+//     slider.scrollLeft = scrollLeft - walk;
+//   });
+// }
 
 function initNavActive() {
   if (!navMenu) return;
@@ -93,7 +92,6 @@ function closeUserDropdown() {
 function initUserDropdown() {
   if (!userToggle || !userDropdown) return;
 
-  // toggle dropdown user di navbar
   userToggle.addEventListener("click", (e) => {
     e.stopPropagation();
     userDropdown.classList.toggle("open");
@@ -105,24 +103,25 @@ function initUserDropdown() {
       userDropdown.contains(e.target) || userToggle.contains(e.target);
     if (!inside) closeUserDropdown();
   });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeUserDropdown();
-  });
 }
 
 // pastikan user login dan role customer; alihkan admin
 async function checkSession() {
   try {
+    //Memanggil API backend untuk mengambil info user yang sedang login
     const res = await fetch(API.USER_SHOW, {
       credentials: "include",
     });
+
+    //kalau respon gk ok
     if (!res.ok) throw new Error("not logged in");
 
+    //ambil data json di be
     const { data } = await res.json();
     const user = data || {};
     const role = (user.role || "").toLowerCase();
 
+    //cek role
     if (role === "admin") {
       window.location.href = "./admin/event/event.html";
       return;
@@ -132,10 +131,12 @@ async function checkSession() {
       throw new Error("not customer");
     }
 
+    //jika lolos, tampilkan nama user di navbar
     if (displayName) {
       displayName.textContent = user.username || "Customer";
     }
 
+    //tampil avatar
     showLoggedIn(user);
   } catch {
     window.location.href = "./login.html";
@@ -143,6 +144,7 @@ async function checkSession() {
 }
 
 function showLoggedIn(userData) {
+  //ambil nama element dan nama di be lalu ubah di tampilan
   if (userLabel) {
     userLabel.style.display = "inline-flex";
     const nameText = userData?.username || "User";
@@ -153,6 +155,7 @@ function showLoggedIn(userData) {
     if (emailEl) emailEl.textContent = emailText;
   }
 
+  //ambil poto dari be
   if (userAvatar) {
     const photo = userData?.user_profile
       ? STORAGE.PROFILE + userData.user_profile + `?t=${Date.now()}`
@@ -206,12 +209,15 @@ async function loadEvents() {
 
 function renderEvents(events) {
   if (!eventContainer) return;
+  //Untuk setiap event ev -> panggil createEventCard(ev)->di join -> dimasukkan ke container
   eventContainer.innerHTML = events.map((ev) => createEventCard(ev)).join("");
 }
 
+//search by name
 function filterEvents(query) {
-  // pencarian sederhana berdasarkan nama
   const q = query.trim().toLowerCase();
+
+  //kalau inputan kosong
   if (!q) {
     renderEvents(lastSortedByLocation ? sortByLocation(allEvents) : allEvents);
     return;
@@ -372,7 +378,7 @@ function initEventClicks() {
 
 function initCustomerDashboard() {
   cacheDom();
-  initSliderDrag();
+  // initSliderDrag();
   initNavActive();
   initUserDropdown();
   initEventClicks();
