@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# Biarkan request ke API tetap menuju backend
+RewriteRule ^api(/.*)?$ - [L,NC]
+
+# Lewati jika file atau folder sudah ada (mis. asset frontend)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Jalankan file PHP apa adanya
+RewriteRule \.php$ - [L]
+
+# Arahkan semua request lain ke folder frontend
+RewriteRule ^(.*)$ frontend/$1 [L]
