@@ -402,24 +402,28 @@ function profilePage() {
     logoutBtn?.addEventListener("click", handleLogout);
     deleteBtn?.addEventListener("click", handleDelete);
 
-    // tolong pelajari ini i blm loo
+    // button ganti foto dan input filenya ada ga?
     if (changePhotoLink && photoInput) {
         changePhotoLink.addEventListener("click", (e) => {
             e.preventDefault();
+            // klik link ganti foto
             photoInput.click();
         });
         photoInput.addEventListener("change", (e) => cekPhoto(e.target.files[0]));
     }
+
+    // kalau cancel ga reload bistu cancelPhoto();
     if (removePhotoLink) {
         removePhotoLink.addEventListener("click", (e) => {
             e.preventDefault();
             cancelPhoto();
         });
     }
+    
+    // klo foto simpan diklik panggil savePhoto()
     if (savePhotoBtn) {
         savePhotoBtn.addEventListener("click", savePhoto);
     }
 }
 
 document.addEventListener("DOMContentLoaded", profilePage);
-

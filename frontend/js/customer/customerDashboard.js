@@ -209,7 +209,7 @@ async function loadEvents() {
 
 function renderEvents(events) {
   if (!eventContainer) return;
-  //Untuk setiap event ev -> panggil createEventCard(ev)->di join -> dimasukkan ke container
+  // Untuk setiap event ev -> panggil createEventCard(ev)->di join -> dimasukkan ke container
   eventContainer.innerHTML = events.map((ev) => createEventCard(ev)).join("");
 }
 
@@ -229,41 +229,60 @@ function filterEvents(query) {
   renderEvents(filtered);
 }
 
-// bagian alex
+// haversine formula untuk hitung jarak
+// referensi https://github.com/github-copilot/code_referencing?cursor=d447bd94466b4587953cf1b1e11fe48b
 function haversine(lat1, lon1, lat2, lon2) {
-  // hitung jarak antar koordinat (km)
-  const toRad = (deg) => (deg * Math.PI) / 180;
-  const R = 6371;
+  // jari" bumi
+  const R = 6371; // km
+
+  // Ngubah derajat ke radian
+  const toRad = (x) => x * Math.PI / 180;
+
+  // Selisih jarak atas–bawah dan kiri–kanan
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+
+  // Menghitung jarak
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  
   return R * c;
 }
 
-// bagian alex
+// sorting
 function sortByLocation(list, coords) {
+  // cek koordinat
   if (!coords) return list;
+
+  // list lalu ubah tiap event jadi object { ev, distance }
   const sorted = [...list].map((ev) => {
+
+    // Ambil data lokasi berdasarkan location_id event
+    // Kalau tidak ketemu buat objek kosong
     const loc = locationMap[ev.location_id] || {};
+
+    // Ubah latitude & longitude jadi number
     const lat = Number(loc.latitude);
     const lon = Number(loc.longitude);
-    const distance =
-      isNaN(lat) || isNaN(lon)
-        ? Number.POSITIVE_INFINITY
-        : haversine(coords.lat, coords.lon, lat, lon);
+
+    // Hitung jarak ke posisi user
+    // Kalau latitude atau longitude tidak valid (NaN)
+    // maka jarak dibuat Infinity supaya event jadi paling akhir
+    const distance = isNaN(lat) || isNaN(lon) ? Number.POSITIVE_INFINITY : haversine(coords.lat, coords.lon, lat, lon);
+
+    // Kembalikan object berisi event dan jaraknya
     return { ev, distance };
   });
+
+  // Urutkan berdasarkan jarak dari yang terdekat ke yang terjauh
   sorted.sort((a, b) => a.distance - b.distance);
+
+  // Ambil kembali hanya data eventnya saja
   return sorted.map((item) => item.ev);
 }
 
-// bagian alex
+// handle tombol lokasi 
 function handleUseLocation() {
   if (!useLocationBtn) return;
   // matikan mode lokasi jika sedang aktif
@@ -275,22 +294,24 @@ function handleUseLocation() {
     return;
   }
 
-  if (!navigator.geolocation) {
-    alert("Browser tidak mendukung geolokasi.");
-    return;
-  }
+  // aktifkan mode lokasi
   useLocationBtn.disabled = true;
   useLocationBtn.textContent = "Mengambil lokasi...";
+
+  // ambil lokasi user dari browser
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const coords = {
         lat: pos.coords.latitude,
         lon: pos.coords.longitude,
       };
+      console.log(pos);
       lastSortedByLocation = true;
       locationActive = true;
+      // sorting berdasarkan jarak
       const sorted = sortByLocation(allEvents, coords);
       renderEvents(sorted);
+
       useLocationBtn.disabled = false;
       useLocationBtn.textContent = "Lokasi aktif";
     },
