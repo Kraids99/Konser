@@ -1,4 +1,5 @@
 import { API } from "../../index.js";
+import { cekAdmin } from "../adminAuth.js";
 
 // form tambah ticket
 let form;
@@ -81,12 +82,14 @@ function goBack() {
   window.location.href = "./ticket.html";
 }
 
-function initTicketCreate() {
+async function initTicketCreate() {
   form = document.getElementById("ticketForm");
   statusEl = document.getElementById("formStatus");
   backBtn = document.getElementById("backBtn");
   selectEvent = document.getElementById("event_id");
 
+  const isAdmin = await cekAdmin();
+  if (!isAdmin) return;
   loadEvents();
 
   if (form) form.addEventListener("submit", handleSubmit);

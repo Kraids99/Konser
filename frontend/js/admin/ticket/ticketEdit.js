@@ -1,4 +1,5 @@
 import { API } from "../../index.js";
+import { cekAdmin } from "../adminAuth.js";
 
 // form edit ticket
 let form;
@@ -135,6 +136,8 @@ async function initTicketEdit() {
   }
   if (ticketIdInput) ticketIdInput.value = ticketId;
 
+  const isAdmin = await cekAdmin();
+  if (!isAdmin) return;
   await loadEvents();
   await loadTicket(ticketId);
 

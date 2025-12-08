@@ -1,4 +1,5 @@
 import { API } from "../../index.js";
+import { cekAdmin } from "../adminAuth.js";
 
 // form edit event
 let form;
@@ -119,6 +120,9 @@ async function initEventEdit() {
   submitBtn = document.getElementById("submitBtn");
   locationSelect = document.getElementById("location_id");
   eventIdInput = document.getElementById("event_id");
+
+  const isAdmin = await cekAdmin();
+  if (!isAdmin) return;
 
   if (!eventId) {
     alert("ID event tidak ditemukan.");

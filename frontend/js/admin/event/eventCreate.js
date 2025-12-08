@@ -1,4 +1,5 @@
 import { API } from "../../index.js";
+import { cekAdmin, isAdmin } from "../adminAuth.js";
 
 // form tambah event
 let form;
@@ -64,11 +65,14 @@ function goBack() {
   window.location.href = "./event.html";
 }
 
-function initEventCreate() {
+async function initEventCreate() {
   form = document.getElementById("eventForm");
   statusEl = document.getElementById("formStatus");
   backBtn = document.getElementById("backBtn");
   locationSelect = document.getElementById("location_id");
+
+  const isAdmin = await cekAdmin();
+  if (!isAdmin) return;
 
   loadLocations();
 

@@ -1,4 +1,5 @@
 import { API } from "../../index.js";
+import { cekAdmin } from "../adminAuth.js";
 
 // daftar ticket untuk admin
 let listEl;
@@ -154,9 +155,11 @@ function bindButtons() {
   }
 }
 
-function initTicketPage() {
+async function initTicketPage() {
   cacheDom();
   bindButtons();
+  const isAdmin = await cekAdmin();
+  if (!isAdmin) return;
   fetchTickets();
 }
 

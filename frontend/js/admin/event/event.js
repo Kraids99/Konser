@@ -1,4 +1,5 @@
 import { API } from "../../index.js";
+import { cekAdmin } from "../adminAuth.js";
 
 // daftar event untuk admin
 let eventsListEl;
@@ -198,9 +199,11 @@ function bindButtons() {
   }
 }
 
-function initEventPage() {
+async function initEventPage() {
   cacheDom();
   bindButtons();
+  const isAdmin = await cekAdmin();
+  if (!isAdmin) return;
   fetchEvents();
 }
 
