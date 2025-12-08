@@ -1,23 +1,22 @@
 import { API } from "../../index.js";
 
-// daftar event untuk admin
-let eventsListEl;
+let eventsListEl; // event list (kartu)
 let searchInput;
-let addButtons = [];
-let rawEvents = [];
-let locationMap = {};
+let addButton;
+let rawEvents = []; // data event dari API (disimpan supaya bisa difilter)
+let locationMap = {}; // object peta location_id
 
+// ambil elemen DOM
 function cacheDom() {
-  eventsListEl = document.getElementById("eventsList");
-  searchInput = document.getElementById("searchInput");
-  addButtons = [
-    document.getElementById("addEventBtn"),
-    document.getElementById("addEventBtn2"),
-  ].filter(Boolean);
+  eventsListEl = document.getElementById("eventsList"); // container kartu event
+  searchInput = document.getElementById("searchInput"); // input pencarian
+  addButton = document.getElementById("addEventBtn2"); // button add
 }
 
+// fetch lokasi dan simpan ke locationMap
 async function fetchLocations() {
   try {
+    // panggil API lokasi (pakai cookie/session)
     const res = await fetch(API.LOCATIONS, { credentials: "include" });
     const data = await res.json();
     if (!res.ok || data.status !== "success") return;
@@ -25,10 +24,11 @@ async function fetchLocations() {
       locationMap[loc.location_id] = loc;
     });
   } catch {
-    // abaikan error lokasi, kartu tetap muncul
+    // abaikan error lokasi
   }
 }
 
+// fetch daftar event
 async function fetchEvents() {
   if (!eventsListEl) return;
   try {
@@ -42,12 +42,13 @@ async function fetchEvents() {
       return;
     }
     rawEvents = data.data || [];
-    renderEvents(rawEvents);
+    renderEvents(rawEvents); // buat tampilin kartu di page
   } catch (err) {
     eventsListEl.innerHTML = `<div class="empty">Error: ${err.message}</div>`;
   }
 }
 
+// tampilin kartu di page
 function renderEvents(list) {
   if (!eventsListEl) return;
 
@@ -56,12 +57,13 @@ function renderEvents(list) {
     return;
   }
 
+  // map() buat looping + return nilai baru untuk setiap item
   const cards = list
     .map((ev) => {
       const status = computeStatus(ev.event_date);
       const quota = ev.quota ?? 0;
       const sold = ev.tickets_sold ?? 0;
-      const pct = quota ? Math.min(100, Math.round((sold / quota) * 100)) : 0;
+      const pct = quota ? Math.min(100, Math.round((sold / quota) * 100)) : 0; // persen tiket terjual untuk progress bar
       const loc = locationMap[ev.location_id] || {};
 
       const eventDate = new Date(ev.event_date);
@@ -71,13 +73,6 @@ function renderEvents(list) {
         year: "numeric",
       });
 
-      const timeFormatted =
-        eventDate.toLocaleTimeString("id-ID", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        }) + " WIB";
-
       return `
             <article class="event-card-modern">
                 <div class="event-header">
@@ -86,9 +81,7 @@ function renderEvents(list) {
                     )}</h3>
                     <span class="pill ${status}">${status}</span>
                 </div>
-                <div class="event-artist">${escapeHtml(
-                  ev.artist_name || ev.event_name || "-"
-                )}</div>
+                <div class="event-artist">Various Artists</div>
                 
                 <div class="event-details">
                     <div class="detail-item">
@@ -124,11 +117,12 @@ function renderEvents(list) {
                 </div>
             </article>`;
     })
-    .join("");
+    .join(""); // menggabungkan semua string jadi satu HTML
 
   eventsListEl.innerHTML = cards;
 }
 
+// statys di card
 function computeStatus(dateStr) {
   if (!dateStr) return "upcoming";
   const today = new Date();
@@ -150,6 +144,7 @@ function escapeHtml(str) {
   });
 }
 
+// search by nama event dan kota
 function applySearch() {
   const term = (searchInput?.value || "").toLowerCase();
   const filtered = rawEvents.filter((ev) => {
@@ -187,11 +182,11 @@ async function deleteEvent(id) {
 }
 
 function bindButtons() {
-  addButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
+  if (addButton) {
+    addButton.addEventListener("click", () => {
       window.location.href = "./eventCreate.html";
     });
-  });
+  }
 
   if (searchInput) {
     searchInput.addEventListener("input", applySearch);
@@ -204,7 +199,9 @@ function initEventPage() {
   fetchEvents();
 }
 
+// export fungsi ke global (window)
 window.editEvent = editEvent;
 window.deleteEvent = deleteEvent;
 
+// browser manggil initEVentPage saat seluruh struktur HTML sudah selesai dimuat, buat cegah null
 document.addEventListener("DOMContentLoaded", initEventPage);

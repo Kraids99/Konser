@@ -175,17 +175,3 @@ select:disabled {
   color: #1d4ed8;
 }
 
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-  aside.sidebar {
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-  }
-  .nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}

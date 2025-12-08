@@ -20,12 +20,6 @@ main.content {
   font-size: 24px;
 }
 
-.eyebrow {
-  color: #5b6478;
-  font-size: 13px;
-  margin: 0;
-}
-
 .page-subtitle {
   margin: 0;
   color: #5b6478;
@@ -52,12 +46,6 @@ main.content {
   gap: 8px;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
 label {
   font-weight: 600;
   color: #374151;
@@ -66,7 +54,6 @@ label {
 
 input[type="text"],
 input[type="date"],
-input[type="time"],
 input[type="number"],
 select {
   width: 100%;
@@ -81,10 +68,6 @@ select {
 
 select {
   cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpath fill='%236B7280' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
   padding-right: 48px;
 }
 
@@ -95,9 +78,8 @@ input::placeholder {
 input:focus,
 select:focus {
   outline: none;
-  border-color: #cbd5e1;
-  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15);
-  background: #fff;
+  border-color: #2d6dff;
+  box-shadow: 0 0 0 3px rgba(45, 109, 255, 0.12);
 }
 
 .actions {
@@ -164,22 +146,4 @@ select:focus {
 .status.error {
   background: #fef2f2;
   color: #dc2626;
-}
-
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-  aside.sidebar {
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-  }
-  .nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .form-row {
-    grid-template-columns: 1fr;
-  }
 }

@@ -1,17 +1,19 @@
-/* Shared admin sidebar/nav styles */
 body {
   margin: 0;
   background: #f5f7fb;
   color: #0f172a;
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
+/* fr artinya fraction unit, jadi, kolom pertama lebarnya fixed 260px, kolom kedua ambil sisa ruang (1fr) */
+/* vh: viewport height */
 .layout {
   display: grid;
   grid-template-columns: 260px 1fr;
   min-height: 100vh;
 }
 
+/* isi sidebar menuru ke bawah (vertical) */
 aside.sidebar {
   background: #0f1d3a;
   color: #e5edff;
@@ -32,6 +34,8 @@ aside.sidebar {
   margin-bottom: 18px;
 }
 
+
+/* inherit berarti ngikut parent */
 .user-chip {
   display: flex;
   align-items: center;
@@ -44,6 +48,8 @@ aside.sidebar {
   color: inherit;
 }
 
+/* cover buat ngisi area bulat */
+/* flex-shrink biar avatar tidak mengecil saat container sempit */
 .user-chip .avatar {
   width: 44px;
   height: 44px;
