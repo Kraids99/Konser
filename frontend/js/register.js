@@ -30,7 +30,17 @@ async function handleRegister(e) {
       method: "POST",
       body: data, // browser otomatis buat boundary
     });
-    const result = await res.json();
+
+    // Safeguard: kalau backend balikin HTML/404, jangan pecah di JSON.parse
+    const raw = await res.text();
+    let result;
+    try {
+      result = JSON.parse(raw);
+    } catch (err) {
+      throw new Error(
+        `Respons bukan JSON (status ${res.status}). Periksa URL API: ${API.REGISTER}`
+      );
+    }
 
     if (res.ok) {
       alert("Pendaftaran berhasil!");

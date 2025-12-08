@@ -1,5 +1,8 @@
-// base urlnya yang ada di api
-export const API_BASE = "/konser/api/index.php";
+// Hitung base path dinamis supaya tetap benar meski folder proyek punya spasi/kasus huruf beda.
+// Contoh: http://localhost/PWD%20Tubes/Konser/frontend/login.html -> /PWD%20Tubes/Konser
+const APP_BASE = window.location.pathname.split("/frontend/")[0] || "";
+
+export const API_BASE = `${APP_BASE}/api/index.php`;
 
 export function api(action) {
     return `${API_BASE}?action=${action}`;
@@ -51,5 +54,5 @@ export const API = {
 
 // Storage api path
 export const STORAGE = {
-    PROFILE: "/konser/api/storage/profile/",
+    PROFILE: `${APP_BASE}/api/storage/profile/`,
 };
