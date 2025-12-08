@@ -1,6 +1,5 @@
 import { API } from "../../index.js";
 
-// form tambah ticket
 let form;
 let statusEl;
 let backBtn;
