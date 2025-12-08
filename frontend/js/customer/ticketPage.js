@@ -37,6 +37,7 @@ function formatDate(dateStr) {
   });
 }
 
+//render tampilan tiket yg jenis
 function renderOptions() {
   if (!optionsContainer) return;
 
@@ -52,7 +53,6 @@ function renderOptions() {
       <div class="ticket-option" data-id="${t.id}">
         <div class="ticket-info">
           <h4>${t.name}</h4>
-          <div class="stock">Tersedia: ${t.stockText}</div>
         </div>
         <div class="ticket-price">${formatRupiah(t.price)}</div>
         <div class="stepper">
@@ -74,44 +74,38 @@ function attachStepperHandlers() {
   const optionEls = optionsContainer.querySelectorAll(".ticket-option");
   optionEls.forEach((el) => {
     const id = el.dataset.id;
+    //ambil tombol dari classnya
     const minus = el.querySelector(".minus");
     const plus = el.querySelector(".plus");
     const qtyEl = el.querySelector(".qty");
-    const data = ticketOptionsData.find((t) => t.id === id);
 
+    //klik tombol minus
     minus.addEventListener("click", () => {
       cart[id] = Math.max(0, (cart[id] || 0) - 1);
       qtyEl.textContent = cart[id];
       updateTotals();
-      updateDisabledState(data, minus, plus);
     });
 
+    //klik tombol plus
     plus.addEventListener("click", () => {
-      const next = (cart[id] || 0) + 1;
-      if (data.maxStock !== null && next > data.maxStock) return;
-      cart[id] = next;
+      cart[id] = (cart[id] || 0) + 1;
       qtyEl.textContent = cart[id];
       updateTotals();
-      updateDisabledState(data, minus, plus);
     });
-
-    updateDisabledState(data, minus, plus);
   });
 }
 
-function updateDisabledState(data, minus, plus) {
-  const qty = cart[data.id] || 0;
-  minus.disabled = qty <= 0;
-  plus.disabled = data.maxStock !== null ? qty >= data.maxStock : false;
-}
-
 function updateTotals() {
+  //ambil total tiket
   const totals = ticketOptionsData.reduce(
-    (acc, t) => {
+    //loop per tiket format key value
+    (tampung, t) => {
       const qty = cart[t.id] || 0;
-      acc.qty += qty;
-      acc.amount += qty * t.price;
-      return acc;
+      //jika user pilih tiket vip,dsb qty ditampung
+      tampung.qty += qty;
+      //harga dihitung
+      tampung.amount += qty * t.price;
+      return tampung;
     },
     { qty: 0, amount: 0 }
   );
@@ -123,8 +117,12 @@ function updateTotals() {
 
 async function loadEvent() {
   if (!eventId) return null;
+
+  //fetch
   const res = await fetch(`${API.EVENT_SHOW}&id=${encodeURIComponent(eventId)}`);
+  //ubah respon jdi json
   const data = await res.json();
+  //status = error dia bakal return null
   if (!res.ok || data.status !== "success") return null;
   return data.data;
 }
@@ -149,12 +147,16 @@ async function loadTickets() {
 }
 
 function applyEventToUI(ev, loc) {
+  //set jadi titleElement berdasarkan nama
   if (titleEl) titleEl.textContent = ev?.event_name || "Event";
+  // artis
   if (artistEl) artistEl.textContent = ev?.artist_name || "Various Artists";
 
+  //tanggal
   const dateText = formatDate(ev?.event_date);
   if (dateEl) dateEl.textContent = dateText;
 
+  //lokasi
   if (locationEl) {
     const locText = loc
       ? `${loc.address || "-"}, ${loc.city || "-"}`
@@ -165,19 +167,19 @@ function applyEventToUI(ev, loc) {
 
 function mapTicketsToOptions(tickets) {
   // ubah data API menjadi data untuk UI
+  //{ "ticket_id": 1, "ticket_type": "VIP", "price": 150000 },... misal ada banyak
   ticketOptionsData = tickets.map((t) => {
-    const maxStock = t.quota ?? null;
+    //nanti bakal diambil satu satu id, tipe, harga
     return {
       id: String(t.ticket_id ?? t.ticket_type ?? Math.random()),
       rawId: t.ticket_id ?? null,
       name: t.ticket_type || "Tiket",
       price: Number(t.price || 0),
-      stockText: maxStock !== null ? `${maxStock} tiket` : "tersedia",
-      maxStock: maxStock !== null ? Number(maxStock) : null,
     };
   });
 }
 
+//ambil fungsi fungsi yang sudah dibuat sbeelumnya
 async function initPage() {
   try {
     [eventData] = await Promise.all([loadEvent()]);
@@ -197,13 +199,17 @@ async function initPage() {
   }
 }
 
+
 function handleCheckout() {
+  //error handling kalau tiket 0
   if (!totalsState.qty) {
     alert("Pilih jumlah tiket terlebih dahulu.");
     return;
   }
 
+  //ambil tiket yg qty > 0
   const selections = ticketOptionsData
+  //ambil tiket yang hanya dipilih user
     .filter((t) => (cart[t.id] || 0) > 0)
     .map((t) => ({
       ticket_id: t.rawId,
@@ -213,6 +219,7 @@ function handleCheckout() {
       subtotal: (cart[t.id] || 0) * t.price,
     }));
 
+    //simpan dlu di payload datanya
   const payload = {
     event_id: eventData?.event_id || eventId || null,
     event_name: eventData?.event_name || titleEl?.textContent || "",
@@ -225,7 +232,9 @@ function handleCheckout() {
     location: locationData || null,
   };
 
+  //lalu simpan di sessionStorage
   sessionStorage.setItem("checkoutData", JSON.stringify(payload));
+  //redirect
   window.location.href = "./transaction.html";
 }
 
