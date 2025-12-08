@@ -8,6 +8,7 @@ let optionsContainer;
 let totalTicketsEl;
 let totalPriceEl;
 let payBtn;
+let closeBtn;
 let titleEl;
 let artistEl;
 let dateEl;
@@ -233,6 +234,7 @@ function initTicketPage() {
   totalTicketsEl = document.getElementById("totalTickets");
   totalPriceEl = document.getElementById("totalPrice");
   payBtn = document.getElementById("payBtn");
+  closeBtn = document.querySelector(".icon-btn");
   titleEl = document.getElementById("eventTitle");
   artistEl = document.getElementById("eventArtist");
   dateEl = document.getElementById("eventDate");
@@ -240,6 +242,17 @@ function initTicketPage() {
 
   if (payBtn) {
     payBtn.addEventListener("click", handleCheckout);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (document.referrer) {
+        window.history.back();
+      } else {
+        window.location.href = "./customerDashboard.html";
+      }
+    });
   }
 
   initPage();

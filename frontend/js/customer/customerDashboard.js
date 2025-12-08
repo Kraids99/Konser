@@ -3,9 +3,6 @@ import { API, STORAGE } from "../index.js";
 // konstanta dasar
 const DEFAULT_AVATAR = "./assets/userDefault.png";
 
-let loginBtn;
-let registerBtn;
-let logoutBtn;
 let userLabel;
 let userAvatar;
 let userDropdown;
@@ -23,12 +20,10 @@ let scrollLeft;
 let locationMap = {};
 let allEvents = [];
 let lastSortedByLocation = false;
+let locationActive = false;
 
 function cacheDom() {
   // ambil semua elemen yang sering dipakai
-  loginBtn = document.querySelector('[data-auth="login"]');
-  registerBtn = document.querySelector('[data-auth="register"]');
-  logoutBtn = document.querySelector('[data-auth="logout"]');
   userLabel = document.querySelector('[data-auth="user"]');
   userAvatar = document.querySelector('[data-auth="user"] .avatar');
   userDropdown = document.querySelector('[data-auth="user"] .nav-dropdown');
@@ -148,10 +143,6 @@ async function checkSession() {
 }
 
 function showLoggedIn(userData) {
-  if (loginBtn) loginBtn.style.display = "none";
-  if (registerBtn) registerBtn.style.display = "none";
-  if (logoutBtn) logoutBtn.style.display = "inline-flex";
-
   if (userLabel) {
     userLabel.style.display = "inline-flex";
     const nameText = userData?.username || "User";
@@ -172,37 +163,6 @@ function showLoggedIn(userData) {
     };
     userAvatar.src = photo;
   }
-}
-
-function showLoggedOut() {
-  if (loginBtn) loginBtn.style.display = "inline-flex";
-  if (registerBtn) registerBtn.style.display = "inline-flex";
-  if (logoutBtn) logoutBtn.style.display = "none";
-
-  if (userLabel) {
-    userLabel.style.display = "none";
-    const nameEl = userLabel.querySelector(".username");
-    const emailEl = userLabel.querySelector(".email");
-    if (nameEl) nameEl.textContent = "";
-    if (emailEl) emailEl.textContent = "";
-  }
-
-  if (userAvatar) {
-    userAvatar.src = DEFAULT_AVATAR;
-  }
-
-  closeUserDropdown();
-}
-
-async function handleLogout() {
-  try {
-    await fetch(API.LOGOUT, {
-      method: "POST",
-      credentials: "include",
-    });
-  } catch {}
-  showLoggedOut();
-  window.location.href = "./login.html";
 }
 
 async function loadLocations() {
@@ -263,6 +223,7 @@ function filterEvents(query) {
   renderEvents(filtered);
 }
 
+// bagian alex
 function haversine(lat1, lon1, lat2, lon2) {
   // hitung jarak antar koordinat (km)
   const toRad = (deg) => (deg * Math.PI) / 180;
@@ -279,6 +240,7 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
+// bagian alex
 function sortByLocation(list, coords) {
   if (!coords) return list;
   const sorted = [...list].map((ev) => {
@@ -295,35 +257,41 @@ function sortByLocation(list, coords) {
   return sorted.map((item) => item.ev);
 }
 
+// bagian alex
 function handleUseLocation() {
   if (!useLocationBtn) return;
+  // matikan mode lokasi jika sedang aktif
+  if (locationActive) {
+    locationActive = false;
+    lastSortedByLocation = false;
+    renderEvents(allEvents);
+    useLocationBtn.textContent = "Gunakan Lokasi";
+    return;
+  }
+
   if (!navigator.geolocation) {
     alert("Browser tidak mendukung geolokasi.");
     return;
   }
   useLocationBtn.disabled = true;
   useLocationBtn.textContent = "Mengambil lokasi...";
-  const resetBtn = (label = "Gunakan Lokasi") => {
-    useLocationBtn.disabled = false;
-    useLocationBtn.textContent = label;
-  };
-  const timeout = setTimeout(() => resetBtn(), 8000);
   navigator.geolocation.getCurrentPosition(
     (pos) => {
-      clearTimeout(timeout);
       const coords = {
         lat: pos.coords.latitude,
         lon: pos.coords.longitude,
       };
       lastSortedByLocation = true;
+      locationActive = true;
       const sorted = sortByLocation(allEvents, coords);
       renderEvents(sorted);
-      resetBtn("Lokasi aktif");
+      useLocationBtn.disabled = false;
+      useLocationBtn.textContent = "Lokasi aktif";
     },
     () => {
-      clearTimeout(timeout);
       alert("Gagal membaca lokasi. Pastikan izin lokasi diaktifkan.");
-      resetBtn();
+      useLocationBtn.disabled = false;
+      useLocationBtn.textContent = "Gunakan Lokasi";
     }
   );
 }
@@ -415,10 +383,6 @@ function initCustomerDashboard() {
 
   if (useLocationBtn) {
     useLocationBtn.addEventListener("click", handleUseLocation);
-  }
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", handleLogout);
   }
 
   loadEvents();

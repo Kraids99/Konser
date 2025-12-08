@@ -90,19 +90,36 @@ function renderHistory(items, ticketMap) {
         : "-";
 
       return `
-        <div class="history-item">
-          <img src="${DEFAULT_POSTER}" alt="Poster Event" class="history-img">
+        <article class="history-card">
+          <header class="history-top">
+            <div>
+              <div class="event-name">${eventName}</div>
+              <div class="pill pill-type">${ticketType}</div>
+            </div>
+            <div class="total-amount">${currency.format(total)}</div>
+          </header>
 
-          <div class="history-info">
-            <h3>${eventName}</h3>
-            <p>Tiket: <strong>${ticketType}</strong></p>
-            <p>Lokasi: ${location}</p>
-            <p>Tanggal beli: <strong>${dateStr}</strong></p>
-            <p>Jumlah: ${qty}</p>
-            <p>Total: <strong>${currency.format(total)}</strong></p>
-            <p>Kode Tiket: <strong>${trx.ticket_token || "-"}</strong></p>
+          <div class="meta-list">
+            <div class="meta-item">
+              <span class="meta-label">Lokasi</span>
+              <span class="meta-value">${location}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Tanggal beli</span>
+              <span class="meta-value">${dateStr}</span>
+            </div>
+            <div class="meta-row">
+              <div class="meta-item">
+                <span class="meta-label">Jumlah</span>
+                <span class="meta-value">${qty} tiket</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Harga</span>
+                <span class="meta-value">${currency.format(price)}</span>
+              </div>
+            </div>
           </div>
-        </div>
+        </article>
       `;
     })
     .join("");

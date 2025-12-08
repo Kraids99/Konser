@@ -15,6 +15,7 @@ let subtotalEl;
 let feeEl;
 let totalEl;
 let payBtn;
+let closeBtn;
 
 function setMethod(method) {
   // ubah tab aktif dan tampilkan panel yang sesuai
@@ -41,8 +42,7 @@ function loadCheckoutData() {
     const firstTicket = data.tickets?.[0];
 
     const subtotal = data.totals?.amount || 0;
-    const fee = 5000;
-    const total = subtotal + fee;
+    const total = subtotal;
 
     if (orderTitleEl) orderTitleEl.textContent = data.event_name || "Pesanan";
     if (orderTypeEl) orderTypeEl.textContent = firstTicket?.ticket_type || "-";
@@ -54,12 +54,32 @@ function loadCheckoutData() {
       orderPriceEl.textContent = formatRupiah(firstTicket?.subtotal || subtotal);
 
     if (subtotalEl) subtotalEl.textContent = formatRupiah(subtotal);
-    if (feeEl) feeEl.textContent = formatRupiah(fee);
     if (totalEl) totalEl.textContent = formatRupiah(total);
     if (payBtn) payBtn.textContent = `Bayar ${formatRupiah(total)}`;
   } catch (err) {
     console.error("Gagal load checkoutData:", err);
   }
+}
+
+function handleClose() {
+  try {
+    // baca lagi untuk ambil event_id
+    if (!checkoutData) {
+      const raw = sessionStorage.getItem("checkoutData");
+      if (raw) checkoutData = JSON.parse(raw);
+    }
+  } catch {}
+
+  sessionStorage.removeItem("checkoutData");
+  const hasHistory = window.history.length > 1;
+  if (hasHistory) {
+    window.history.back();
+    return;
+  }
+  const eventId = checkoutData?.event_id;
+  window.location.href = eventId
+    ? `./ticket.html?id=${eventId}`
+    : "./customerDashboard.html";
 }
 
 async function fetchUser() {
@@ -100,29 +120,6 @@ async function fetchEventById(id) {
   const data = await res.json();
   if (!res.ok || data.status !== "success") return null;
   return data.data;
-}
-
-async function updateEventQuota() {
-  try {
-    if (!checkoutData?.event_id || !checkoutData?.totals?.qty) return;
-    const eventInfo = await fetchEventById(checkoutData.event_id);
-    if (!eventInfo) return;
-    const currentQuota = Number(eventInfo.quota || 0);
-    const newQuota = Math.max(0, currentQuota - Number(checkoutData.totals.qty || 0));
-    const form = new FormData();
-    form.append("event_id", eventInfo.event_id);
-    form.append("event_name", eventInfo.event_name || "");
-    form.append("location_id", eventInfo.location_id || "");
-    form.append("event_date", eventInfo.event_date || "");
-    form.append("quota", newQuota);
-    await fetch(API.EVENT_UPDATE, {
-      method: "POST",
-      body: form,
-      credentials: "include",
-    });
-  } catch (err) {
-    console.error("Gagal update quota event:", err);
-  }
 }
 
 async function submitTransaction() {
@@ -168,7 +165,6 @@ async function submitTransaction() {
       alert("Transaksi berhasil disimpan.");
       sessionStorage.removeItem("checkoutData");
       sessionStorage.setItem("paymentCompleted", "true");
-      await updateEventQuota();
       window.location.href = "./customerDashboard.html";
     } else {
       alert(data.message || "Gagal menyimpan transaksi.");
@@ -176,14 +172,6 @@ async function submitTransaction() {
   } catch (err) {
     alert("Error: " + err.message);
   }
-}
-
-function lockBackNavigation() {
-  // cegah tombol back di tab ini setelah bayar
-  window.history.pushState(null, "", window.location.href);
-  window.addEventListener("popstate", () => {
-    window.history.pushState(null, "", window.location.href);
-  });
 }
 
 function attachTabListeners() {
@@ -208,6 +196,7 @@ function initTransactionPage() {
   feeEl = document.getElementById("feePrice");
   totalEl = document.getElementById("totalPrice");
   payBtn = document.getElementById("payNowBtn");
+  closeBtn = document.querySelector(".icon-btn");
 
   if (tabButtons.length) {
     setMethod("ewallet");
@@ -221,9 +210,15 @@ function initTransactionPage() {
     });
   }
 
+  if (closeBtn) {
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      handleClose();
+    });
+  }
+
   loadCheckoutData();
   fetchUser();
-  lockBackNavigation();
 }
 
 document.addEventListener("DOMContentLoaded", initTransactionPage);

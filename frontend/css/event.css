@@ -32,21 +32,21 @@ main.content {
 }
 
 .btn-primary {
-  background: #2d6dff;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(45, 109, 255, 0.25);
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
-}
-
+    background: #2d6dff;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: none;
+    transition: transform 0.1s ease;
+  }
+  
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(45, 109, 255, 0.3);
-}
+    transform: translateY(-1px);
+    box-shadow: none;
+  }
 
 /* Search Section */
 .search-section {

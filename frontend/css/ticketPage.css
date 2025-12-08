@@ -243,29 +243,29 @@ body {
 }
 
 .primary-btn {
-  background: #7097ff;
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  min-width: 210px;
-  text-align: center;
-  box-shadow: 0 12px 30px rgba(112, 151, 255, 0.35);
-  transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease;
-}
-
+    background: #2563EB;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    min-width: 210px;
+    text-align: center;
+    box-shadow: none;
+    transition: transform 0.12s ease, background 0.15s ease;
+  }
+  
 .primary-btn:hover {
-  transform: translateY(-1px);
-  background: #5b82f0;
-  box-shadow: 0 14px 34px rgba(112, 151, 255, 0.4);
-}
-
+    transform: translateY(-1px);
+    background: #1D4ED8;
+    box-shadow: none;
+  }
+  
 .primary-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 8px 20px rgba(112, 151, 255, 0.3);
-}
+    transform: translateY(0);
+    box-shadow: none;
+  }
 
 @media (max-width: 1024px) {
   .modal-body {

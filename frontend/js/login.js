@@ -5,9 +5,10 @@ let loginForm;
 let msgBox;
 let quickLinks = [];
 
-function setMsg(text) {
+function setMsg(text, color = "black") {
   if (!msgBox) return;
   msgBox.textContent = text;
+  msgBox.style.color = color;
 }
 
 function redirectByRole(role) {
@@ -31,7 +32,7 @@ async function handleLogin(e) {
     data.append("remember", "1");
   }
 
-  setMsg("Memproses...");
+  setMsg("Memproses...", "blue");
 
   try {
     const res = await fetch(API.LOGIN, {
@@ -42,14 +43,14 @@ async function handleLogin(e) {
     const result = await res.json();
 
     if (res.ok && result.status === "success") {
-      setMsg("Login berhasil!");
+      setMsg("Login berhasil!", "green");
       redirectByRole(result.data?.role);
       return;
     }
 
-    setMsg("Login gagal: " + (result.message || "unknown error"));
+    setMsg("Login gagal: " + (result.message || "unknown error"), "red");
   } catch (err) {
-    setMsg("Request gagal: " + err.message);
+    setMsg("Request gagal: " + err.message, "red");
   }
 }
 

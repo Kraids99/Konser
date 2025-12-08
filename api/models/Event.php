@@ -37,12 +37,16 @@ class Event {
 
     public function getAll()
     {
-        $query = "SELECT * FROM {$this->table}";
+        // ambil event + total tiket terjual (jumlah quantity dari transaksi)
+        $query = "SELECT *, SUM(tn.quantity) AS tickets_sold
+                FROM events e
+                LEFT JOIN tickets tk ON tk.event_id = e.event_id
+                LEFT JOIN transactions tn ON tn.ticket_id = tk.ticket_id
+                GROUP BY e.event_id";
+
         $stmt = mysqli_prepare($this->db, $query);
-        // execute query
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
-        // mengubah seluruh hasil query menjadi array asosiatif
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
@@ -62,16 +66,21 @@ class Event {
 
     public function getById($id)
     {
-        $query = "SELECT * FROM {$this->table} WHERE event_id = ?";
+        // ambil event + total tiket terjual (jumlah quantity dari transaksi)
+        $query = "SELECT e.*, COALESCE(s.sold, 0) AS tickets_sold
+                  FROM {$this->table} e
+                  LEFT JOIN (
+                      SELECT tk.event_id, SUM(tn.quantity) AS sold
+                      FROM tickets tk
+                      LEFT JOIN transactions tn ON tn.ticket_id = tk.ticket_id
+                      GROUP BY tk.event_id
+                  ) s ON s.event_id = e.event_id
+                  WHERE e.event_id = ?";
 
-        // siapin query
         $stmt = mysqli_prepare($this->db, $query);
-        // ngisi data
         mysqli_stmt_bind_param($stmt, "i", $id);
-        // jalankan query
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
-        // ambil data 1 baris sebagai array
         return mysqli_fetch_assoc($result);
     }
 
