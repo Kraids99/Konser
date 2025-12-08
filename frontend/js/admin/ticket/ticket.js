@@ -1,7 +1,6 @@
 import { API } from "../../index.js";
 import { cekAdmin } from "../adminAuth.js";
 
-// daftar ticket untuk admin
 let listEl;
 let searchInput;
 let addButtons = [];
@@ -10,10 +9,7 @@ let rawTickets = [];
 function cacheDom() {
   listEl = document.getElementById("ticketsList");
   searchInput = document.getElementById("searchInput");
-  addButtons = [
-    document.getElementById("addTicketBtn"),
-    document.getElementById("addTicketBtn2"),
-  ].filter(Boolean);
+  addButtons = [document.getElementById("addTicketBtn2")].filter(Boolean);
 }
 
 async function fetchTickets() {
@@ -101,19 +97,13 @@ function escapeHtml(str) {
   });
 }
 
+// search by nama event dan tipe tiket
 function applySearch() {
   const term = (searchInput?.value || "").toLowerCase();
   const filtered = rawTickets.filter((t) => {
     const type = (t.ticket_type || "").toLowerCase();
     const eventName = (t.event_name || "").toLowerCase();
-    const eventId = String(t.event_id || "");
-    const locText = `${t.city || ""} ${t.address || ""}`.toLowerCase();
-    return (
-      type.includes(term) ||
-      eventName.includes(term) ||
-      eventId.includes(term) ||
-      locText.includes(term)
-    );
+    return type.includes(term) || eventName.includes(term);
   });
   renderTickets(filtered);
 }

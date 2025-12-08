@@ -20,12 +20,6 @@ main.content {
   font-size: 24px;
 }
 
-.eyebrow {
-  color: #5b6478;
-  font-size: 13px;
-  margin: 0;
-}
-
 .page-subtitle {
   margin: 0;
   color: #5b6478;
@@ -48,7 +42,7 @@ main.content {
     box-shadow: none;
   }
 
-/* Search Section */
+/* search Section */
 .search-section {
   display: flex;
   align-items: center;
@@ -89,14 +83,14 @@ main.content {
   opacity: 0.5;
 }
 
-/* Tickets Grid */
+/* tickets Grid */
 .tickets-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 18px;
 }
 
-/* Modern Ticket Card */
+/* ticket card */
 .ticket-card-modern {
   background: #ffffff;
   border-radius: 16px;
@@ -260,22 +254,4 @@ main.content {
   background: #fff;
   border-radius: 12px;
   border: 2px dashed #e5e7eb;
-}
-
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-  aside.sidebar {
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-  }
-  .nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .tickets-grid {
-    grid-template-columns: 1fr;
-  }
 }

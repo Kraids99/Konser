@@ -1,7 +1,6 @@
 import { API } from "../../index.js";
 import { cekAdmin } from "../adminAuth.js";
 
-// form edit ticket
 let form;
 let statusEl;
 let backBtn;
