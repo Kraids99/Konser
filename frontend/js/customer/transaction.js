@@ -8,9 +8,8 @@ let tabButtons = [];
 let walletSection;
 let bankSection;
 let orderTitleEl;
-let orderTypeEl;
-let orderQtyPriceEl;
 let orderPriceEl;
+let orderItemsEl;
 let subtotalEl;
 let feeEl;
 let totalEl;
@@ -39,19 +38,31 @@ function loadCheckoutData() {
     if (!raw) return;
     const data = JSON.parse(raw);
     checkoutData = data;
-    const firstTicket = data.tickets?.[0];
+    const tickets = data.tickets || [];
 
     const subtotal = data.totals?.amount || 0;
     const total = subtotal;
 
     if (orderTitleEl) orderTitleEl.textContent = data.event_name || "Pesanan";
-    if (orderTypeEl) orderTypeEl.textContent = firstTicket?.ticket_type || "-";
-    if (orderQtyPriceEl)
-      orderQtyPriceEl.textContent = firstTicket
-        ? `${firstTicket.qty} x ${formatRupiah(firstTicket.price)}`
-        : "-";
-    if (orderPriceEl)
-      orderPriceEl.textContent = formatRupiah(firstTicket?.subtotal || subtotal);
+    if (orderPriceEl) orderPriceEl.textContent = formatRupiah(total);
+
+    if (orderItemsEl) {
+      if (!tickets.length) {
+        orderItemsEl.innerHTML = `<div class="order-item empty">Tidak ada tiket dipilih.</div>`;
+      } else {
+        orderItemsEl.innerHTML = tickets
+          .map(
+            (t) => `
+              <div class="order-item">
+                <div class="item-name">${t.ticket_type || "-"}</div>
+                <div class="item-qty">${t.qty} x ${formatRupiah(t.price)}</div>
+                <div class="item-subtotal">${formatRupiah(t.subtotal)}</div>
+              </div>
+            `
+          )
+          .join("");
+      }
+    }
 
     if (subtotalEl) subtotalEl.textContent = formatRupiah(subtotal);
     if (totalEl) totalEl.textContent = formatRupiah(total);
@@ -127,8 +138,9 @@ async function submitTransaction() {
     return;
   }
 
-  const firstTicket = checkoutData.tickets[0];
-  if (!firstTicket.ticket_id) {
+  const tickets = checkoutData.tickets || [];
+  const validTickets = tickets.filter((t) => t.ticket_id);
+  if (!validTickets.length) {
     alert("Ticket ID tidak ditemukan.");
     return;
   }
@@ -137,31 +149,34 @@ async function submitTransaction() {
   const metodePembayaran =
     method === "bank" ? `${getSelectedBank()}` : `${getSelectedWallet()}`;
 
-  const form = new FormData();
-  if (userId) form.append("user_id", userId);
-  form.append("ticket_id", firstTicket.ticket_id);
-    form.append("ticket_token", "T" + Date.now());
-    form.append("quantity", checkoutData.totals?.qty || firstTicket.qty || 1);
-    form.append("total", checkoutData.totals?.amount || firstTicket.subtotal || 0);
-    form.append("metode_pembayaran", metodePembayaran);
-
   try {
-    const res = await fetch(API.TRANSACTION_CREATE, {
-      method: "POST",
-      body: form,
-      credentials: "include",
-    });
-    const data = await res.json();
-    if (res.ok && data.status === "success") {
-      alert("Transaksi berhasil disimpan.");
-      sessionStorage.removeItem("checkoutData");
-      sessionStorage.setItem("paymentCompleted", "true");
-      window.location.href = "./customerDashboard.html";
-    } else {
-      alert(data.message || "Gagal menyimpan transaksi.");
+    for (let i = 0; i < validTickets.length; i += 1) {
+      const ticket = validTickets[i];
+      const form = new FormData();
+      form.append("user_id", userId);
+      form.append("ticket_id", ticket.ticket_id);
+      form.append("ticket_token", "T" + Date.now() + "_" + i);
+      form.append("quantity", ticket.qty || 1);
+      form.append("total", ticket.subtotal || 0);
+      form.append("metode_pembayaran", metodePembayaran);
+
+      const res = await fetch(API.TRANSACTION_CREATE, {
+        method: "POST",
+        body: form,
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!(res.ok && data.status === "success")) {
+        throw new Error(data.message || "Gagal menyimpan transaksi.");
+      }
     }
+
+    alert("Transaksi berhasil disimpan.");
+    sessionStorage.removeItem("checkoutData");
+    sessionStorage.setItem("paymentCompleted", "true");
+    window.location.href = "./customerDashboard.html";
   } catch (err) {
-    alert("Error: " + err.message);
+    alert(err.message ? err.message : "Error menyimpan transaksi.");
   }
 }
 
@@ -180,8 +195,7 @@ function initTransactionPage() {
   walletSection = document.getElementById("walletSection");
   bankSection = document.getElementById("bankSection");
   orderTitleEl = document.getElementById("orderEventTitle");
-  orderTypeEl = document.getElementById("orderTicketType");
-  orderQtyPriceEl = document.getElementById("orderQtyPrice");
+  orderItemsEl = document.getElementById("orderItems");
   orderPriceEl = document.getElementById("orderPrice");
   subtotalEl = document.getElementById("subtotalPrice");
   feeEl = document.getElementById("feePrice");

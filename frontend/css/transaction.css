@@ -91,17 +91,17 @@ body {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 12px 14px;
-  display: grid;
-  grid-template-columns: 1fr auto auto;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  align-items: center;
   margin-bottom: 16px;
 }
 
-.order-texts {
+.order-header {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .order-title {
@@ -109,13 +109,48 @@ body {
   color: #111827;
 }
 
-.order-sub {
-  font-size: 13px;
-  color: #6b7280;
-}
-
 .order-price {
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  background: #f9fafb;
+  border: 1px solid #eef1f5;
+  border-radius: 10px;
+}
+
+.order-item.empty {
+  display: block;
+  text-align: center;
+  color: #6b7280;
+  background: #f9fafb;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.item-qty {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.item-subtotal {
+  font-weight: 700;
+  color: #111827;
   white-space: nowrap;
 }
 
