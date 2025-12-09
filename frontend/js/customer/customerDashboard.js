@@ -58,6 +58,7 @@ function cacheDom() {
 //   });
 // }
 
+//untuk menampilkan concerTix, profil, membuat menu ada biru biru
 function initNavActive() {
   if (!navMenu) return;
   const links = Array.from(navMenu.querySelectorAll("a"));

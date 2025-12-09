@@ -8,8 +8,7 @@ let tabButtons = [];
 let walletSection;
 let bankSection;
 let orderTitleEl;
-let orderTypeEl;
-let orderQtyPriceEl;
+let ticketCardsEl;
 let orderPriceEl;
 let subtotalEl;
 let feeEl;
@@ -39,19 +38,41 @@ function loadCheckoutData() {
     if (!raw) return;
     const data = JSON.parse(raw);
     checkoutData = data;
-    const firstTicket = data.tickets?.[0];
+    const tickets = data.tickets || [];
 
-    const subtotal = data.totals?.amount || 0;
+    const subtotal =
+      data.totals?.amount ||
+      tickets.reduce(
+        (sum, t) => sum + (t.subtotal ?? (t.qty || 0) * (t.price || 0)),
+        0
+      );
     const total = subtotal;
 
     if (orderTitleEl) orderTitleEl.textContent = data.event_name || "Pesanan";
-    if (orderTypeEl) orderTypeEl.textContent = firstTicket?.ticket_type || "-";
-    if (orderQtyPriceEl)
-      orderQtyPriceEl.textContent = firstTicket
-        ? `${firstTicket.qty} x ${formatRupiah(firstTicket.price)}`
-        : "-";
-    if (orderPriceEl)
-      orderPriceEl.textContent = formatRupiah(firstTicket?.subtotal || subtotal);
+
+    if (ticketCardsEl) {
+      if (!tickets.length) {
+        ticketCardsEl.innerHTML = '<div class="ticket-card empty">Belum ada tiket dipilih.</div>';
+      } else {
+        ticketCardsEl.innerHTML = tickets
+          .map((t) => {
+            const qty = t.qty || 0;
+            const price = Number(t.price || 0);
+            const sub = t.subtotal ?? qty * price;
+            return `
+              <div class="ticket-card">
+                <div>
+                  <div class="ticket-type">${t.ticket_type || "Tiket"}</div>
+                  <div class="ticket-meta">${qty} x ${formatRupiah(price)}</div>
+                </div>
+                <div class="ticket-price">${formatRupiah(sub)}</div>
+              </div>`;
+          })
+          .join("");
+      }
+    }
+
+    if (orderPriceEl) orderPriceEl.textContent = formatRupiah(subtotal);
 
     if (subtotalEl) subtotalEl.textContent = formatRupiah(subtotal);
     if (totalEl) totalEl.textContent = formatRupiah(total);
@@ -180,8 +201,7 @@ function initTransactionPage() {
   walletSection = document.getElementById("walletSection");
   bankSection = document.getElementById("bankSection");
   orderTitleEl = document.getElementById("orderEventTitle");
-  orderTypeEl = document.getElementById("orderTicketType");
-  orderQtyPriceEl = document.getElementById("orderQtyPrice");
+  ticketCardsEl = document.getElementById("ticketCards");
   orderPriceEl = document.getElementById("orderPrice");
   subtotalEl = document.getElementById("subtotalPrice");
   feeEl = document.getElementById("feePrice");
